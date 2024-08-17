@@ -7,8 +7,11 @@ import { NotificationModule } from './notification/notification.module';
 import { DiscountandPromotionModule } from './discountand-promotion/discountand-promotion.module';
 import { ReviewAndRatingModule } from './review-and-rating/review-and-rating.module';
 import { PaymentModule } from './payment/payment.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import ormconfig from './ormconfig';
 
 @Module({
-  imports: [UserModule, ProductModule, OrderModule, LogModule, NotificationModule, DiscountandPromotionModule, ReviewAndRatingModule, PaymentModule],
+  imports: [ TypeOrmModule.forRoot(ormconfig), UserModule, ProductModule, OrderModule, LogModule, NotificationModule, DiscountandPromotionModule, ReviewAndRatingModule, PaymentModule],
 })
-export class AppModule {}
+export class AppModule {
+}
