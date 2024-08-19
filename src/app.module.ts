@@ -8,10 +8,12 @@ import { DiscountandPromotionModule } from './discountand-promotion/discountand-
 import { ReviewAndRatingModule } from './review-and-rating/review-and-rating.module';
 import { PaymentModule } from './payment/payment.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
 import ormconfig from './ormconfig';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ TypeOrmModule.forRoot(ormconfig), UserModule, ProductModule, OrderModule, LogModule, NotificationModule, DiscountandPromotionModule, ReviewAndRatingModule, PaymentModule],
+  imports: [ ConfigModule.forRoot({isGlobal: true,}), TypeOrmModule.forRoot(ormconfig), UserModule, ProductModule, OrderModule, LogModule, NotificationModule, DiscountandPromotionModule, ReviewAndRatingModule, PaymentModule, AuthModule],
 })
 export class AppModule {
 }
