@@ -12,7 +12,6 @@ export class AuthService {
     constructor( private readonly jwtService: JwtService, @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>) {}
 
     async createJwtToken(user: UserEntity): Promise<string>{
-        console.log(process.env.JST_SECRETE);
         const payload = { sub: user.userId, username: user.username };
         return  await this.jwtService.signAsync(payload)
 

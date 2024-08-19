@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { LoginUserDTO } from 'src/user/DTO/loginUser.Dto';
@@ -20,5 +20,4 @@ export class AuthController {
         delete user.password;
         return await this.authService.BuildLoginRespose(user);
     }
-
 }
