@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDTO } from './DTO/creatUser.Dto';
@@ -6,6 +6,7 @@ import { UserType } from './type/user.type';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { User } from './decoratores/user.decorator';
 import { UserEntity } from './user.entity';
+import { UpdateUserDto } from './DTO/updateUser.Dto';
 
 @ApiTags("users")
 @Controller('user')
@@ -30,4 +31,16 @@ export class UserController {
     async getCurrentUser(@User() currentUserId):Promise<UserEntity>{
         return this.userService.findById(currentUserId.id)
     }
+
+    @ApiBearerAuth()
+    @Put()
+    @ApiBody({
+        type: UpdateUserDto,
+        description: "Body for updating User"
+    })
+    @UseGuards(AuthGuard)
+    async updateUser(@User() currentUserId, @Body() updateUserDto: UpdateUserDto):Promise<UserEntity>{
+        return this.userService.updateUser(currentUserId.id ,updateUserDto)
+    }
+
 }
