@@ -36,7 +36,8 @@ export class UserService {
     }
 
     async findById(id: number):Promise<UserEntity>{
-        return this.userRepository.findOne({where:{ userId : id}})
+        const user = await this.userRepository.findOne({where:{ userId : id}})
+        return user
     }
 
     async updateUser(currentUserId :number, updateUserDto:UpdateUserDto):Promise<UserEntity>{

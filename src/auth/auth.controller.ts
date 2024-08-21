@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, UsePipes, ValidationPipe } from '@nestjs/c
 import { AuthService } from './auth.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { LoginUserDTO } from 'src/user/DTO/loginUser.Dto';
-import { UserResponsIntereface } from 'src/user/type/createUser.interface';
+import { UserResponsIntereface } from 'src/user/type/userResponse.interface';
 
 @ApiTags("auth")
 @Controller('auth')

@@ -3,7 +3,7 @@ import { LoginUserDTO } from 'src/user/DTO/loginUser.Dto';
 import { compare } from 'bcrypt';
 import { UserEntity } from 'src/user/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { UserResponsIntereface } from 'src/user/type/createUser.interface';
+import { UserResponsIntereface } from 'src/user/type/userResponse.interface';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
