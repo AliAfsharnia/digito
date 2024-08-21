@@ -4,9 +4,9 @@ import { UserService } from './user.service';
 import { CreateUserDTO } from './DTO/creatUser.Dto';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { User } from './decoratores/user.decorator';
-import { UserEntity } from './user.entity';
 import { UpdateUserDto } from './DTO/updateUser.Dto';
 import { AdminAuthGuard } from 'src/auth/Guards/auth.admin.guard';
+import { UserDto } from './DTO/user.Dto';
 
 @ApiTags("users")
 @Controller('user')
@@ -19,7 +19,7 @@ export class UserController {
         description: "Body for creating User"
     })
     @UsePipes(new ValidationPipe)
-    async createUser(@Body() createUserDTO: CreateUserDTO):Promise<UserEntity>{
+    async createUser(@Body() createUserDTO: CreateUserDTO):Promise<UserDto>{
         const user = await this.userService.createUser(createUserDTO);
         return user
     }
@@ -27,7 +27,7 @@ export class UserController {
     @ApiBearerAuth()
     @Get()
     @UseGuards(AuthGuard)
-    async getCurrentUser(@User() currentUserId):Promise<UserEntity>{
+    async getCurrentUser(@User() currentUserId):Promise<UserDto>{
         return this.userService.findById(currentUserId.userId)
     }
 
@@ -38,14 +38,14 @@ export class UserController {
         description: "Body for updating User"
     })
     @UseGuards(AuthGuard)
-    async updateUser(@User() currentUser, @Body() updateUserDto: UpdateUserDto):Promise<UserEntity>{
+    async updateUser(@User() currentUser, @Body() updateUserDto: UpdateUserDto):Promise<UserDto>{
         return this.userService.updateUser(currentUser.userId ,updateUserDto)
     }
 
     @ApiBearerAuth()
     @Get('isAdmin')
     @UseGuards(AdminAuthGuard)
-    async isAdmin(@User() currentUser):Promise<UserEntity>{
+    async isAdmin(@User() currentUser):Promise<UserDto>{
         return this.userService.findById(currentUser.userId)
     }
 }

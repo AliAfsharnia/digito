@@ -3,14 +3,15 @@ import { UserEntity } from './user.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDTO } from './DTO/creatUser.Dto';
-import { AuthService } from 'src/auth/auth.service';
 import { UpdateUserDto } from './DTO/updateUser.Dto';
+import { UserDto } from './DTO/user.Dto';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UserService {
     constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>){}
 
-    async createUser(createUserDto: CreateUserDTO): Promise<UserEntity>{
+    async createUser(createUserDto: CreateUserDTO): Promise<UserDto>{
 
         const userByEmail = await this.userRepository.findOne({
             where:{email :createUserDto.email}
@@ -28,23 +29,33 @@ export class UserService {
 
         Object.assign(newUser,createUserDto);
 
-        return await this.userRepository.save(newUser);
+        const user = await this.userRepository.save(newUser);
+        const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
+
+        return userDto;
     }
 
-    async findOneByEmail(email: string): Promise<UserEntity> {
-        return this.userRepository.findOne({where:{ email : email}})
+    async findOneByEmail(email: string): Promise<UserDto> {
+        const user = await this.userRepository.findOne({where:{ email : email}})
+        const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
+        return userDto;
     }
 
-    async findById(id: number):Promise<UserEntity>{
+    async findById(id: number):Promise<UserDto>{
         const user = await this.userRepository.findOne({where:{ userId : id}})
-        return user
+        const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
+
+        return userDto;
     }
 
-    async updateUser(currentUserId :number, updateUserDto:UpdateUserDto):Promise<UserEntity>{
-        const user = await this.userRepository.findOne({where:{userId : currentUserId}})
+    async updateUser(currentUserId :number, updateUserDto:UpdateUserDto):Promise<UserDto>{
+        const currentUser = await this.userRepository.findOne({where:{userId : currentUserId}})
 
-        Object.assign(user, updateUserDto);
+        Object.assign(currentUser, updateUserDto);
 
-        return await this.userRepository.save(user);
+        const user = await this.userRepository.save(currentUser)
+        const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
+
+        return userDto;
     }
 }
