@@ -25,4 +25,16 @@ export class CreateUserDTO{
        })
      @IsNotEmpty()
      readonly password: string;
+
+     @ApiProperty({
+          example: ' ',
+          required: false
+       })
+     readonly image?: string;
+
+     @ApiProperty({
+          example: ' ',
+          required: false
+       })
+     readonly bio?: string
 }

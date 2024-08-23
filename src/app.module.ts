@@ -12,9 +12,11 @@ import { AuthModule } from './auth/auth.module';
 import ormconfig from './ormconfig';
 import { ConfigModule } from '@nestjs/config';
 import { AuthMiddleware } from './auth/middleware/auth.middleware';
+import { BrandModule } from './brand/brand.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
-  imports: [ ConfigModule.forRoot({isGlobal: true,}), TypeOrmModule.forRoot(ormconfig), UserModule, ProductModule, OrderModule, LogModule, NotificationModule, DiscountandPromotionModule, ReviewAndRatingModule, PaymentModule, AuthModule],
+  imports: [ ConfigModule.forRoot({isGlobal: true,}), TypeOrmModule.forRoot(ormconfig), UserModule, ProductModule, OrderModule, LogModule, NotificationModule, DiscountandPromotionModule, ReviewAndRatingModule, PaymentModule, AuthModule, BrandModule, CategoryModule],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer){

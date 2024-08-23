@@ -8,8 +8,8 @@ const config: PostgresConnectionOptions = {
     password: '123',    
     database: 'digito',
     entities: [ __dirname +'/**/*.entity{.ts,.js}'],
-    synchronize: true,
-    //migrations: [ __dirname +'/migrations/**/*{.ts,.js}'],
+    synchronize: false,
+    migrations: [ __dirname +'/migrations/**/*{.ts,.js}'],
 }
 
 export default config;
