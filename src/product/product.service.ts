@@ -6,6 +6,9 @@ import slugify from 'slugify';
 import { CreateProductDTO } from './DTO/createProduct.Dto';
 import { BrandEntity } from 'src/brand/brand.entity';
 import { CategoryEntity } from 'src/category/category.entity';
+import { UpdateBrandDTO } from 'src/brand/DTO/updateBrand.Dto';
+import { title } from 'process';
+import { updateProductDTO } from './DTO/updateProduct.Dto';
 
 @Injectable()
 export class ProductService {
@@ -44,5 +47,25 @@ export class ProductService {
 
     async getProductBySlug(slug: string):Promise<ProductEntity>{
         return this.productRepository.findOne({where:{slug: slug}})
+    }
+
+    async updateProduct(slug: string, updateProductDTO: updateProductDTO):Promise<ProductEntity>{
+        const product = await this.productRepository.findOne({where:{slug :slug}})
+
+        Object.assign(product, updateProductDTO);
+    
+        if(updateProductDTO.brandId){
+            product.brand = await this.brandRepository.findOne({where:{brandId: updateProductDTO.brandId}});
+        }
+
+        if(updateProductDTO.categoryId){
+            product.category = await this.categoryRepository.findOne({where:{categoryId: updateProductDTO.categoryId}});
+        }
+
+        if(updateProductDTO.title){
+            product.slug = this.getSlug(product.title)
+        }
+
+        return await this.productRepository.save(product);
     }
 }

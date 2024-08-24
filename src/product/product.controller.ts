@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { AdminAuthGuard } from 'src/auth/Guards/auth.admin.guard';
 import { ProductEntity } from './product.entity';
 import { CreateProductDTO } from './DTO/createProduct.Dto';
+import { updateProductDTO } from './DTO/updateProduct.Dto';
 
 @ApiTags("products")
 @Controller('product')
@@ -30,7 +31,12 @@ export class ProductController {
 
     @Get(':slug')
     async getProductBySlug(@Param('slug') slug: string): Promise<ProductEntity>{
-        return this.productService.getProductBySlug(slug);
+        return await this.productService.getProductBySlug(slug);
+    }
+
+    @Put(':slug')
+    async updateProduct(@Param('slug') slug:string ,@Body() updateProductDTO: updateProductDTO):Promise<ProductEntity>{
+        return await this.productService.updateProduct(slug, updateProductDTO);
     }
 
 }
