@@ -1,9 +1,10 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { ProductEntity } from "src/product/product.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'category'})
 export class CategoryEntity{
     @PrimaryGeneratedColumn()
-    brandId: number;
+    categoryId: number;
 
     @Column()
     slug: string;
@@ -11,13 +12,13 @@ export class CategoryEntity{
     @Column()
     name: string;
 
-    @Column({default: 0})
-    count: number;
-
     @Column({default: ''})
     description: string;
 
     @Column({default: ''})
     image: string;
 
+    @OneToMany(() => ProductEntity, (product) => product.category)
+    products: ProductEntity;
 }
+
