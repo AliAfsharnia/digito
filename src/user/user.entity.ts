@@ -1,5 +1,6 @@
 import { hash } from "bcrypt";
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { ProductEntity } from "src/product/product.entity";
+import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'users'})
 export class UserEntity{
@@ -28,4 +29,8 @@ export class UserEntity{
     async hashPassword(){
         this.password = await hash(this.password, 10)
     }
+
+    @ManyToMany(() => ProductEntity )
+    @JoinTable()
+    favorites: ProductEntity[];
 }

@@ -7,6 +7,7 @@ import { User } from './decoratores/user.decorator';
 import { UpdateUserDto } from './DTO/updateUser.Dto';
 import { AdminAuthGuard } from 'src/auth/Guards/auth.admin.guard';
 import { UserDto } from './DTO/user.Dto';
+import { ProductEntity } from 'src/product/product.entity';
 
 @ApiTags("users")
 @Controller('user')
@@ -46,6 +47,8 @@ export class UserController {
     @Get('isAdmin')
     @UseGuards(AdminAuthGuard)
     async isAdmin(@User() currentUser):Promise<UserDto>{
-        return this.userService.findById(currentUser.userId)
+        return await this.userService.findById(currentUser.userId)
     }
+
+    
 }

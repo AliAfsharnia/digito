@@ -1,15 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserEntity } from './user.entity';
-import { Repository } from 'typeorm';
+import { DataSource, EntitySchema, RelationQueryBuilder, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDTO } from './DTO/creatUser.Dto';
 import { UpdateUserDto } from './DTO/updateUser.Dto';
 import { UserDto } from './DTO/user.Dto';
 import { plainToInstance } from 'class-transformer';
+import { ProductEntity } from 'src/product/product.entity';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>){}
+    constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>, private dataSourse:DataSource){}
 
     async createUser(createUserDto: CreateUserDTO): Promise<UserDto>{
 
@@ -58,4 +59,5 @@ export class UserService {
 
         return userDto;
     }
+
 }

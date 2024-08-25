@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { AdminAuthGuard } from 'src/auth/Guards/auth.admin.guard';
 import { ProductEntity } from './product.entity';
 import { CreateProductDTO } from './DTO/createProduct.Dto';
 import { updateProductDTO } from './DTO/updateProduct.Dto';
+import { AuthGuard } from 'src/auth/Guards/auth.guard';
+import { User } from 'src/user/decoratores/user.decorator';
 
 @ApiTags("products")
 @Controller('product')
@@ -39,4 +41,29 @@ export class ProductController {
         return await this.productService.updateProduct(slug, updateProductDTO);
     }
 
+    @ApiBearerAuth()
+    @Post(':slug/favorite')
+    @UseGuards(AuthGuard)
+    async likingProduct(@User('id') currentUserId: number, @Param('slug') slug: string ): Promise<ProductEntity>{ 
+        return  this.productService.likingProduct(currentUserId, slug);
+    }
+
+    @ApiBearerAuth()
+    @Delete(':slug/favorite')
+    @UseGuards(AuthGuard)
+    async disLikingProduct(@User('id') currentUserId: number, @Param('slug') slug: string ): Promise<ProductEntity>{ 
+        return  this.productService.disLikingProduct(currentUserId, slug);
+    }
+
+    @Get()
+    async findAll(@User('id') currentUserId: number, @Query() query: any): Promise<{products: ProductEntity[], productsCount: number}>{
+        return this.productService.findAll(currentUserId, query);
+    }
+    
+    /*@ApiBearerAuth()
+    @Get('fav')
+    @UseGuards(AuthGuard)
+    async userFav(@User('id') currentUserId: number):Promise<any>{
+        return await this.productService.userFav(currentUserId);
+    }*/
 }

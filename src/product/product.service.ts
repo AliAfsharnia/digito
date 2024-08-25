@@ -1,20 +1,20 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ProductEntity } from './product.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import slugify from 'slugify';
 import { CreateProductDTO } from './DTO/createProduct.Dto';
 import { BrandEntity } from 'src/brand/brand.entity';
 import { CategoryEntity } from 'src/category/category.entity';
-import { UpdateBrandDTO } from 'src/brand/DTO/updateBrand.Dto';
-import { title } from 'process';
 import { updateProductDTO } from './DTO/updateProduct.Dto';
+import { UserEntity } from 'src/user/user.entity';
 
 @Injectable()
 export class ProductService {
     constructor(@InjectRepository(ProductEntity) private readonly productRepository: Repository<ProductEntity>,
     @InjectRepository(BrandEntity) private readonly brandRepository: Repository<BrandEntity>,
-    @InjectRepository(CategoryEntity) private readonly categoryRepository: Repository<CategoryEntity>){}
+    @InjectRepository(CategoryEntity) private readonly categoryRepository: Repository<CategoryEntity>,
+    @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,private dataSourse:DataSource){}
 
     private getSlug(name :string): string{
         return (slugify(name , { lower : true}) + '-' + ((Math.random() * Math.pow(36 , 6)) | 0).toString(36));
@@ -68,4 +68,100 @@ export class ProductService {
 
         return await this.productRepository.save(product);
     }
+
+    async likingProduct(userId: number, slug: string):Promise<ProductEntity>{
+        const product = await this.getProductBySlug(slug);
+        const user = await this.userRepository.findOne({where: {userId: userId}, relations: ['favorites']});
+    
+        const isNotFavorite = user.favorites.findIndex((productsInFavorites) => productsInFavorites.productId === product.productId) === -1;
+    
+        if(isNotFavorite){
+            user.favorites.push(product);
+            product.favoritesCount++;
+    
+            await this.productRepository.save(product);
+            await this.userRepository.save(user)
+        }    
+                                             
+        return product;
+    }
+    
+    async disLikingProduct(userId: number, slug: string):Promise<ProductEntity>{
+        const product = await this.getProductBySlug(slug);
+        const user = await this.userRepository.findOne({where: {userId: userId}, relations: ['favorites']});
+    
+        const productIndex = user.favorites.findIndex((productsInFavorites) => productsInFavorites.productId === product.productId);
+    
+        if(productIndex >= 0){
+            user.favorites.splice(productIndex, 1);
+            product.favoritesCount--;
+    
+            await this.productRepository.save(product);
+            await this.userRepository.save(user)
+        }   
+    
+        return product;
+    }
+
+    async findAll(currentUserId: number, query: any):Promise<{products: ProductEntity[], productsCount: number}>{
+        const queryBuilder = this.dataSourse.getRepository(ProductEntity).createQueryBuilder('products').leftJoinAndSelect('products.brand', 'brand').leftJoinAndSelect('products.category', 'catgory');
+    
+        queryBuilder.orderBy('product.price', 'DESC')
+        
+        if(query.tag){
+            queryBuilder.andWhere("articles.tagList LIKE :tag", {
+                tag: `%${query.tag}%`,
+            })
+        }
+    
+        if(query.brand){
+            const brand = await this.brandRepository.findOne({where:{name : query.name}})
+            queryBuilder.andWhere("products.brand = :brand", {
+                brand: brand.name,
+            })
+        }
+        
+        if(query.category){
+            const category = await this.categoryRepository.findOne({where:{name : query.name}})
+            queryBuilder.andWhere("products.category = :category", {
+                brand: category.name,
+            })
+        }
+
+        const productsCount = await queryBuilder.getCount();
+    
+        if(query.offset){
+            queryBuilder.offset(query.offset)
+        }
+        
+        if(query.limit){
+            queryBuilder.limit(query.limit)
+        }
+    
+        const products = await queryBuilder.getMany();
+    
+        return {products, productsCount};
+    }
+    
+    /*async userFav(currentUserId: number):Promise<any>{
+        let query = this.userRepository
+        .createQueryBuilder('products')
+        .leftJoin('products.users', 'users')
+        .select('produts')
+        .addSelect('products.users', 'users_favorites_products');
+        const inputs = await query.getRawMany();
+        inputs.map((product)=>{
+        if(product.USERS){
+            return {
+                ...product,
+                users_favorites_products: true,
+                    }
+        } else {
+            return {
+                ...product,
+                users_favorites_products: true,
+                    }
+                }
+        });
+    }*/
 }

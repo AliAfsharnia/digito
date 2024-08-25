@@ -20,6 +20,9 @@ export class ProductEntity{
     @Column()
     price: number;
 
+    @Column({default: 0})
+    favoritesCount: number;
+
     @Column({default: ''})
     seller: string;
 
@@ -41,3 +44,5 @@ z
     @ManyToOne(()=> CategoryEntity ,(category) => category.products , {eager : true})
     category: CategoryEntity;
 }
+
+
