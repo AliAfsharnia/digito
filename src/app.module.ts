@@ -5,7 +5,6 @@ import { OrderModule } from './order/order.module';
 import { LogModule } from './log/log.module';
 import { NotificationModule } from './notification/notification.module';
 import { DiscountandPromotionModule } from './discountand-promotion/discountand-promotion.module';
-import { ReviewAndRatingModule } from './review-and-rating/review-and-rating.module';
 import { PaymentModule } from './payment/payment.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
@@ -14,9 +13,10 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthMiddleware } from './auth/middleware/auth.middleware';
 import { BrandModule } from './brand/brand.module';
 import { CategoryModule } from './category/category.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
-  imports: [ ConfigModule.forRoot({isGlobal: true,}), TypeOrmModule.forRoot(ormconfig), UserModule, ProductModule, OrderModule, LogModule, NotificationModule, DiscountandPromotionModule, ReviewAndRatingModule, PaymentModule, AuthModule, BrandModule, CategoryModule],
+  imports: [ ConfigModule.forRoot({isGlobal: true,}), TypeOrmModule.forRoot(ormconfig), UserModule, ProductModule, OrderModule, LogModule, NotificationModule, DiscountandPromotionModule, PaymentModule, AuthModule, BrandModule, CategoryModule, ReviewModule],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer){

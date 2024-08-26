@@ -1,6 +1,7 @@
 import { hash } from "bcrypt";
 import { ProductEntity } from "src/product/product.entity";
-import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ReviewEntity } from "src/review/review.entity";
+import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'users'})
 export class UserEntity{
@@ -33,4 +34,7 @@ export class UserEntity{
     @ManyToMany(() => ProductEntity )
     @JoinTable()
     favorites: ProductEntity[];
+
+    @OneToMany(() => ReviewEntity, (review) => review.user)
+    reviews: ReviewEntity;
 }

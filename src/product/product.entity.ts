@@ -1,7 +1,8 @@
 import { InjectRepository } from "@nestjs/typeorm";
 import { BrandEntity } from "src/brand/brand.entity";
 import { CategoryEntity } from "src/category/category.entity";
-import { AfterInsert, Column, DataSource, Entity, ManyToOne, PrimaryGeneratedColumn, Repository } from "typeorm";
+import { ReviewEntity } from "src/review/review.entity";
+import { AfterInsert, Column, DataSource, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Repository } from "typeorm";
 
 @Entity({name: 'products'})
 export class ProductEntity{ 
@@ -43,6 +44,9 @@ z
 
     @ManyToOne(()=> CategoryEntity ,(category) => category.products , {eager : true})
     category: CategoryEntity;
+
+    @OneToMany(() => ReviewEntity, (review) => review.product)
+    rewiews: ReviewEntity;
 }
 
 
