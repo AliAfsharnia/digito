@@ -1,20 +1,21 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ProductEntity } from './product.entity';
-import { DataSource, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, In, Repository, getConnection } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import slugify from 'slugify';
 import { CreateProductDTO } from './DTO/createProduct.Dto';
 import { BrandEntity } from 'src/brand/brand.entity';
 import { CategoryEntity } from 'src/category/category.entity';
 import { updateProductDTO } from './DTO/updateProduct.Dto';
 import { UserEntity } from 'src/user/user.entity';
+import { ALL } from 'dns';
 
 @Injectable()
 export class ProductService {
     constructor(@InjectRepository(ProductEntity) private readonly productRepository: Repository<ProductEntity>,
     @InjectRepository(BrandEntity) private readonly brandRepository: Repository<BrandEntity>,
     @InjectRepository(CategoryEntity) private readonly categoryRepository: Repository<CategoryEntity>,
-    @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,private dataSourse:DataSource){}
+    @InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>,@InjectDataSource() private dataSourse:DataSource){}
 
     private getSlug(name :string): string{
         return (slugify(name , { lower : true}) + '-' + ((Math.random() * Math.pow(36 , 6)) | 0).toString(36));
@@ -143,25 +144,20 @@ export class ProductService {
         return {products, productsCount};
     }
     
-    /*async userFav(currentUserId: number):Promise<any>{
-        let query = this.userRepository
-        .createQueryBuilder('products')
-        .leftJoin('products.users', 'users')
-        .select('produts')
-        .addSelect('products.users', 'users_favorites_products');
-        const inputs = await query.getRawMany();
-        inputs.map((product)=>{
-        if(product.USERS){
-            return {
-                ...product,
-                users_favorites_products: true,
-                    }
-        } else {
-            return {
-                ...product,
-                users_favorites_products: true,
-                    }
-                }
-        });
-    }*/
+    async userFav(currentUserId: number):Promise<ProductEntity[]>{
+        const rawResult = await this.dataSourse
+        .createQueryBuilder()
+        .select('"productsProductId"')
+        .from('users_favorites_products', 'users_favorites_products')
+        .where('users_favorites_products."usersUserId" = :id', { id: Number(currentUserId) }).getRawMany()
+        ;
+
+        const productIds = rawResult.map(item => item.productsProductId);
+
+        const products = await this.productRepository.find({where:{productId: In(productIds)}})
+
+       return products;
+    }
+
+    
 }

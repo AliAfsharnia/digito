@@ -7,6 +7,7 @@ import { CreateProductDTO } from './DTO/createProduct.Dto';
 import { updateProductDTO } from './DTO/updateProduct.Dto';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { User } from 'src/user/decoratores/user.decorator';
+import { UserEntity } from 'src/user/user.entity';
 
 @ApiTags("products")
 @Controller('product')
@@ -44,26 +45,26 @@ export class ProductController {
     @ApiBearerAuth()
     @Post(':slug/favorite')
     @UseGuards(AuthGuard)
-    async likingProduct(@User('id') currentUserId: number, @Param('slug') slug: string ): Promise<ProductEntity>{ 
+    async likingProduct(@User('userId') currentUserId: number, @Param('slug') slug: string ): Promise<ProductEntity>{ 
         return  this.productService.likingProduct(currentUserId, slug);
     }
 
     @ApiBearerAuth()
     @Delete(':slug/favorite')
     @UseGuards(AuthGuard)
-    async disLikingProduct(@User('id') currentUserId: number, @Param('slug') slug: string ): Promise<ProductEntity>{ 
+    async disLikingProduct(@User('userId') currentUserId: number, @Param('slug') slug: string ): Promise<ProductEntity>{ 
         return  this.productService.disLikingProduct(currentUserId, slug);
     }
 
     @Get()
-    async findAll(@User('id') currentUserId: number, @Query() query: any): Promise<{products: ProductEntity[], productsCount: number}>{
+    async findAll(@User('userId') currentUserId: number, @Query() query: any): Promise<{products: ProductEntity[], productsCount: number}>{
         return this.productService.findAll(currentUserId, query);
     }
     
-    /*@ApiBearerAuth()
-    @Get('fav')
+    @ApiBearerAuth()
+    @Get('user/fav')
     @UseGuards(AuthGuard)
-    async userFav(@User('id') currentUserId: number):Promise<any>{
+    async userFav(@User('userId') currentUserId: number):Promise<ProductEntity[]>{
         return await this.productService.userFav(currentUserId);
-    }*/
+    }
 }
