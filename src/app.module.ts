@@ -14,9 +14,10 @@ import { AuthMiddleware } from './auth/middleware/auth.middleware';
 import { BrandModule } from './brand/brand.module';
 import { CategoryModule } from './category/category.module';
 import { ReviewModule } from './review/review.module';
+import { AddressModule } from './address/address.module';
 
 @Module({
-  imports: [ ConfigModule.forRoot({isGlobal: true,}), TypeOrmModule.forRoot(ormconfig), UserModule, ProductModule, OrderModule, LogModule, NotificationModule, DiscountandPromotionModule, PaymentModule, AuthModule, BrandModule, CategoryModule, ReviewModule],
+  imports: [ ConfigModule.forRoot({isGlobal: true,}), TypeOrmModule.forRoot(ormconfig), UserModule, ProductModule, OrderModule, LogModule, NotificationModule, DiscountandPromotionModule, PaymentModule, AuthModule, BrandModule, CategoryModule, ReviewModule, AddressModule],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer){

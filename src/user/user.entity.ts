@@ -1,4 +1,5 @@
 import { hash } from "bcrypt";
+import { AddressEntity } from "src/address/address.entity";
 import { ProductEntity } from "src/product/product.entity";
 import { ReviewEntity } from "src/review/review.entity";
 import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
@@ -37,4 +38,7 @@ export class UserEntity{
 
     @OneToMany(() => ReviewEntity, (review) => review.user)
     reviews: ReviewEntity;
+
+    @OneToMany(() => AddressEntity, (address) => address.user)
+    addresses
 }
