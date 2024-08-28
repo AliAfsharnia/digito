@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateAddressDTO } from './DTO/createAddress.dto';
 import { UserEntity } from 'src/user/user.entity';
 import { UpdateAddressDTO } from './DTO/updateAdress.dto';
+import { UserDto } from 'src/user/DTO/user.Dto';
 
 @Injectable()
 export class AddressService {
@@ -43,7 +44,7 @@ export class AddressService {
         return this.addressRepository.delete(address);
     }
 
-    async userAddress(currentUser: UserEntity): Promise<AddressEntity[]>{
+    async userAddress(currentUser: UserDto): Promise<AddressEntity[]>{
         return await this.addressRepository.find({where: {user: currentUser}})
     }
 }

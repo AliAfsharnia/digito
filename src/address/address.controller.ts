@@ -8,6 +8,7 @@ import { AddressEntity } from './address.entity';
 import { UpdateAddressDTO } from './DTO/updateAdress.dto';
 import { DeleteResult } from 'typeorm';
 import { UserEntity } from 'src/user/user.entity';
+import { UserDto } from 'src/user/DTO/user.Dto';
 
 @ApiTags("address")
 @Controller()
@@ -58,7 +59,7 @@ export class AddressController {
     @Get("address")
     @UsePipes(new ValidationPipe)
     @UseGuards(AuthGuard)
-    async userAddress(@User() currentUser: UserEntity):Promise<AddressEntity[]>{
+    async userAddress(@User() currentUser: UserDto):Promise<AddressEntity[]>{
         return await this.addressService.userAddress(currentUser);
     } 
 }

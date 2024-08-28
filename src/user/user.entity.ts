@@ -21,7 +21,7 @@ export class UserEntity{
     @Column({default: ''})
     image: string;
     
-    @Column({select: true})
+    @Column({select: false})
     password: string;
 
     @Column({default: 0})

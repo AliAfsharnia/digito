@@ -57,14 +57,22 @@ export class ProductController {
     }
 
     @Get()
+    async findAll(): Promise<ProductEntity[]>{
+
+        const products = await this.productService.findAll();
+        console.log(products);
+        return products;
+    }
+
+    /*@Get()
     async findAll(@User('userId') currentUserId: number, @Query() query: any): Promise<{products: ProductEntity[], productsCount: number}>{
         return this.productService.findAll(currentUserId, query);
-    }
+    }*/
     
     @ApiBearerAuth()
     @Get('user/fav')
     @UseGuards(AuthGuard)
     async userFav(@User('userId') currentUserId: number):Promise<ProductEntity[]>{
         return await this.productService.userFav(currentUserId);
-    }
+    }        
 }

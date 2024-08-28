@@ -104,7 +104,11 @@ export class ProductService {
         return product;
     }
 
-    async findAll(currentUserId: number, query: any):Promise<{products: ProductEntity[], productsCount: number}>{
+    async findAll():Promise<ProductEntity[]>{
+        return await this.productRepository.find();
+    }
+
+    async findAllFillter(currentUserId: number, query: any):Promise<{products: ProductEntity[], productsCount: number}>{
         const queryBuilder = this.dataSourse.getRepository(ProductEntity).createQueryBuilder('products').leftJoinAndSelect('products.brand', 'brand').leftJoinAndSelect('products.category', 'catgory');
     
         queryBuilder.orderBy('product.price', 'DESC')
