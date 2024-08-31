@@ -4,21 +4,21 @@ import { IsNotEmpty } from "class-validator";
 export class CreateCategoryDTO{
 
      @ApiProperty({
-          example: 'category1',
+          example: 'string',
           required: true
        })
      @IsNotEmpty()
      readonly name: string;
 
      @ApiProperty({
-          example: ' ',
+          example: 'string',
           required: false
        })
      @IsNotEmpty()
      readonly description: string;
 
      @ApiProperty({
-        example: ' ',
+        example: 'string',
         required: false
      })
     @IsNotEmpty()

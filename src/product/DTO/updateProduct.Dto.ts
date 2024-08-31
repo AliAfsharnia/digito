@@ -39,25 +39,25 @@ export class updateProductDTO{
     readonly garanty?: string;
      
     @ApiProperty({
-        example: ' ',
+        example: 'string',
         required: false
     })
     readonly description?: string;
 
     @ApiProperty({
-        example: 'seller1',
+        example: 'string',
         required: false
     })
     readonly seller?:string
 
     @ApiProperty({
-        example: 'url1, url2',
+        example: 'string, string',
         required: false
     })
     readonly images?: string[];
 
     @ApiProperty({
-        example: 'red, blue',
+        example: 'string, string',
         required: false
      })
     readonly colors?: string[];

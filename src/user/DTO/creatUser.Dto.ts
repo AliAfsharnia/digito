@@ -4,14 +4,14 @@ import { IsEmail, IsNotEmpty } from "class-validator";
 export class CreateUserDTO{
 
      @ApiProperty({
-          example: 'user1',
+          example: 'string',
           required: true
        })
      @IsNotEmpty()
      readonly username: string;
 
      @ApiProperty({
-          example: 'user1@gmail.com',
+          example: 'email-string',
           required: true
        })
        
@@ -20,20 +20,20 @@ export class CreateUserDTO{
      readonly email: string;
 
      @ApiProperty({
-          example: '123',
+          example: 'string',
           required: true
        })
      @IsNotEmpty()
      readonly password: string;
 
      @ApiProperty({
-          example: ' ',
+          example: 'string',
           required: false
        })
      readonly image?: string;
 
      @ApiProperty({
-          example: ' ',
+          example: 'string',
           required: false
        })
      readonly bio?: string

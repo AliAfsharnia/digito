@@ -4,32 +4,32 @@ import { IsEmail } from "class-validator";
 export class UpdateUserDto{
 
      @ApiProperty({
-          example: 'user1',
+          example: 'string',
           required: false
        })
      readonly username: string;
 
      @ApiProperty({
-          example: 'user1@gmail.com',
+          example: 'string-email',
           required: false
        })
      @IsEmail()
      readonly email: string;
 
      @ApiProperty({
-          example: '123',
+          example: 'string',
           required: false
        })
      readonly password: string;
 
      @ApiProperty({
-          example: ' ',
+          example: 'string',
           required: false
        })
      readonly image?: string;
 
      @ApiProperty({
-          example: ' ',
+          example: 'string',
           required: false
        })
      readonly bio?: string

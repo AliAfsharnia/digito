@@ -4,32 +4,32 @@ import { IsNotEmpty } from "class-validator";
 export class UpdateAddressDTO{
 
     @ApiProperty({
-         example: 'country',
+         example: 'string',
         required: false
       })
     readonly country?: string;
 
     @ApiProperty({
-         example: 'state',
+         example: 'string',
          required: false
       })
     readonly state?: string;
 
     @ApiProperty({
-        example: 'city',
+        example: 'string',
         required: false
      })
     readonly city?: string;
 
      
     @ApiProperty({
-        example: 'street',
+        example: 'string',
         required: false
      })
     readonly street?: string;
 
     @ApiProperty({
-        example: 'tag',
+        example: 'string',
         required: false
      })
     readonly tag?: string;

@@ -4,14 +4,14 @@ import { IsEmail, IsNotEmpty, IsNumber, Max, Min } from "class-validator";
 export class CreateReviewDTO{
 
      @ApiProperty({
-          example: 'subject',
+          example: 'string',
           required: true
        })
      @IsNotEmpty()
      readonly subject: string;
 
      @ApiProperty({
-          example: 2.5,
+          example: 'number 1 - 5',
           required: true
        })
        
@@ -22,14 +22,14 @@ export class CreateReviewDTO{
      readonly rating: number;
 
      @ApiProperty({
-          example: '',
+          example: 'string',
           required: true
        })
      @IsNotEmpty()
      readonly description: string;
 
      @ApiProperty({
-          example: 'url1, url2',
+          example: 'string, string',
           required: false
       })
       readonly images?: string[];

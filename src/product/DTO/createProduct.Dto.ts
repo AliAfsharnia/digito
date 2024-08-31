@@ -4,7 +4,7 @@ import { IsNotEmpty } from "class-validator";
 export class CreateProductDTO{
 
     @ApiProperty({
-          example: 'product1',
+          example: 'string',
           required: true
     })
     @IsNotEmpty()
@@ -25,45 +25,45 @@ export class CreateProductDTO{
     readonly price: number;
 
     @ApiProperty({
-        example: 1,
+        example: 0,
         required: true
      })
     @IsNotEmpty()
     readonly brandId: number;
 
     @ApiProperty({
-        example: 1,
+        example: 0,
         required: true
      })
     @IsNotEmpty()
     readonly categoryId: number;
 
     @ApiProperty({
-        example: ' ',
+        example: 'string',
         required: false
     })
     readonly garanty?: string;
      
     @ApiProperty({
-        example: ' ',
+        example: 'string',
         required: false
     })
     readonly description?: string;
 
     @ApiProperty({
-        example: 'seller1',
+        example: 'string',
         required: true
     })
     readonly seller:string
 
     @ApiProperty({
-        example: 'url1, url2',
+        example: 'string, string',
         required: false
     })
     readonly images?: string[];
 
     @ApiProperty({
-        example: 'red, blue',
+        example: 'string, string',
         required: false
      })
     readonly colors?: string[];

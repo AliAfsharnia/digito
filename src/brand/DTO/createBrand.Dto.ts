@@ -4,21 +4,21 @@ import { IsNotEmpty } from "class-validator";
 export class CreateBrandDTO{
 
      @ApiProperty({
-          example: 'brand1',
+          example: 'string',
           required: true
        })
      @IsNotEmpty()
      readonly name: string;
 
      @ApiProperty({
-          example: ' ',
+          example: 'string',
           required: false
        })
      @IsNotEmpty()
      readonly description: string;
 
      @ApiProperty({
-        example: ' ',
+        example: 'string',
         required: false
      })
     @IsNotEmpty()

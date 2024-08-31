@@ -4,21 +4,21 @@ import { IsNotEmpty } from "class-validator";
 export class CreateAddressDTO{
 
     @ApiProperty({
-         example: 'country',
+         example: 'string',
         required: true
       })
     @IsNotEmpty()
     readonly country: string;
 
     @ApiProperty({
-         example: 'state',
+         example: 'string',
          required: true
       })
     @IsNotEmpty()
     readonly state: string;
 
     @ApiProperty({
-        example: 'city',
+        example: 'string',
         required: true
      })
     @IsNotEmpty()
@@ -26,14 +26,14 @@ export class CreateAddressDTO{
 
      
     @ApiProperty({
-        example: 'street',
+        example: 'string',
         required: true
      })
     @IsNotEmpty()
     readonly street: string;
 
     @ApiProperty({
-        example: 'tag',
+        example: 'string',
         required: true
      })
     @IsNotEmpty()

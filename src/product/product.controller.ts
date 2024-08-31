@@ -60,7 +60,6 @@ export class ProductController {
     async findAll(): Promise<ProductEntity[]>{
 
         const products = await this.productService.findAll();
-        console.log(products);
         return products;
     }
 

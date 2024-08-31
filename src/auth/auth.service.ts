@@ -18,12 +18,14 @@ export class AuthService {
     }
 
     async signIn(loginUserDto: LoginUserDTO): Promise<UserEntity> {
-        const user = await this.userRepository.findOne({where: {email: loginUserDto.email}});
+        const user = await this.userRepository.findOne({where: {email: loginUserDto.email}, select:{userId: true,bio: true, email: true,username: true,image: true, isAdmin: true,password: true}});
         if (!user) {
             throw new UnauthorizedException();
         }    
-
         const isPasswordCorrect = await compare(loginUserDto.password,  user.password);
+
+        delete user.password;
+
         if (!isPasswordCorrect) {
         throw new UnauthorizedException();
         }
