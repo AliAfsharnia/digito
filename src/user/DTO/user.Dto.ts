@@ -14,6 +14,12 @@ export class UserDto {
     password: string;
 
     @Expose()
+    image: string;
+
+    @Expose()
+    bio: string;
+
+    @Expose()
     isAdmin: number;
 
     constructor(partial: Partial<UserDto>) {

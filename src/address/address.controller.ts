@@ -18,6 +18,7 @@ export class AddressController {
     @ApiBearerAuth()
     @Post("new_address")
     @ApiBody({
+        
         type: CreateAddressDTO,
         description: "Body for creating Address"
     })
