@@ -28,8 +28,9 @@ export class UserService {
         const newUser = new UserEntity();
 
         Object.assign(newUser,createUserDto);
-
-        newUser.image = await this.uploadFile(profilePic);
+        if(profilePic){
+            newUser.image = await this.uploadFile(profilePic);
+        }
 
         const user = await this.userRepository.save(newUser);
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });

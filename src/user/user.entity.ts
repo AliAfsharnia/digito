@@ -25,8 +25,8 @@ export class UserEntity{
     @Column({select: false})
     password: string;
 
-    @Column({default: 0})
-    isAdmin: number;
+    @Column({default: 'customer'})
+    roll: string;
 
     @BeforeInsert()
     async hashPassword(){

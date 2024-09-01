@@ -7,7 +7,7 @@ export class AdminAuthGuard implements CanActivate{
     canActivate(context: ExecutionContext): boolean{
         const request = context.switchToHttp().getRequest<ExpressRequest>();
         if(request.user){
-            if(request.user.isAdmin == 1){
+            if(request.user.roll == 'admin'){
                 return true;
             }
         }   

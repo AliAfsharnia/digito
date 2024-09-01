@@ -26,7 +26,7 @@ export class CreateUserDTO{
      @IsNotEmpty()
      readonly password: string;
 
-     @ApiProperty({ type: 'string', format: 'binary', description: 'Profile picture of the user' })
+     @ApiProperty({ type: 'string', format: 'binary', description: 'Profile picture of the user' , required: false})
      profilePicture?: Express.Multer.File;
 
      @ApiProperty({

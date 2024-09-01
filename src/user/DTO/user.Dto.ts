@@ -20,7 +20,7 @@ export class UserDto {
     bio: string;
 
     @Expose()
-    isAdmin: number;
+    roll: string;
 
     constructor(partial: Partial<UserDto>) {
         Object.assign(this, partial);
