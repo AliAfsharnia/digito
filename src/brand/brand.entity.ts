@@ -7,9 +7,6 @@ export class BrandEntity{
     brandId: number;
 
     @Column()
-    slug: string;
-    
-    @Column()
     name: string;
 
     @Column({default: ''})

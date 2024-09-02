@@ -14,8 +14,8 @@ export class ReviewService {
     @InjectRepository(ProductEntity) private readonly productRepository: Repository<ProductEntity>,
      private dataSourse:DataSource){}
 
-    async createReview(currentUser: UserEntity, slug: string, createReviewDTO: CreateReviewDTO): Promise<ReviewEntity>{
-        const product = await this.productRepository.findOne({where: {slug: slug}})
+    async createReview(currentUser: UserEntity, id: number, createReviewDTO: CreateReviewDTO): Promise<ReviewEntity>{
+        const product = await this.productRepository.findOne({where: {productId: id}})
 
         if(!product){
             throw new HttpException("this product doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
@@ -32,8 +32,8 @@ export class ReviewService {
         return await this.reviewRepository.save(newReview);
     }
 
-    async getProductReviews(slug: string): Promise<ReviewEntity[]>{
-        const product = await this.productRepository.findOne({where: {slug: slug}})
+    async getProductReviews(id: number): Promise<ReviewEntity[]>{
+        const product = await this.productRepository.findOne({where: {productId: id}})
         const reviews = await this.reviewRepository.createQueryBuilder('reviews')
         .where('reviews."productProductId" = :productId', { productId: product.productId })
         .getMany();

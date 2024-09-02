@@ -15,19 +15,19 @@ export class ReviewController {
     constructor(private readonly reviewService: ReviewService){}
 
     @ApiBearerAuth()
-    @Post(':productSlug/add_comment')
+    @Post('products/:id/comments')
     @ApiBody({
         type: CreateReviewDTO,
         description: 'example for creating review',
     })
     @UseGuards(AuthGuard)
-    async createReview(@User()CurrentUser: UserEntity, @Param('productSlug') slug: string, @Body() createReviewDTO: CreateReviewDTO): Promise<ReviewEntity>{
-        return await this.reviewService.createReview(CurrentUser, slug, createReviewDTO);
+    async createReview(@User()CurrentUser: UserEntity, @Param('id') id: number, @Body() createReviewDTO: CreateReviewDTO): Promise<ReviewEntity>{
+        return await this.reviewService.createReview(CurrentUser, id, createReviewDTO);
     }
 
-    @Get(":productSlug/comments")
-    async getProductReviews(@Param('productSlug')slug: string):Promise<ReviewEntity[]>{
-        return await this.reviewService.getProductReviews(slug);
+    @Get("products/:id/comments")
+    async getProductReviews(@Param('id')id: number):Promise<ReviewEntity[]>{
+        return await this.reviewService.getProductReviews(+id);
     }
 
     @ApiBearerAuth()

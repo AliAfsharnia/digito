@@ -9,13 +9,14 @@ import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { User } from 'src/user/decoratores/user.decorator';
 import { UserEntity } from 'src/user/user.entity';
 
-@ApiTags("products")
-@Controller('product')
+
+@Controller()
 export class ProductController {
     constructor(private readonly productService:ProductService){}
 
+    @ApiTags("products")
     @ApiBearerAuth()
-    @Post('add')
+    @Post('product/add')
     @ApiBody({
         type: CreateProductDTO,
         description: 'Json structure for user object',
@@ -32,31 +33,36 @@ export class ProductController {
         return products;
     }
 
-    @Get(':slug')
-    async getProductBySlug(@Param('slug') slug: string): Promise<ProductEntity>{
-        return await this.productService.getProductBySlug(slug);
+    @ApiTags("products")
+    @Get('product/:id')
+    async getProductById(@Param('id') id: number): Promise<ProductEntity>{
+        return await this.productService.getProductById(+id);
     }
 
-    @Put(':slug')
-    async updateProduct(@Param('slug') slug:string ,@Body() updateProductDTO: updateProductDTO):Promise<ProductEntity>{
-        return await this.productService.updateProduct(slug, updateProductDTO);
+    @ApiTags("products")
+    @Put('product/:id')
+    async updateProduct(@Param('id') id: number ,@Body() updateProductDTO: updateProductDTO):Promise<ProductEntity>{
+        return await this.productService.updateProduct(id, updateProductDTO);
     }
 
+    @ApiTags("products")
     @ApiBearerAuth()
-    @Post(':slug/favorite')
+    @Post('product/:id/favorite')
     @UseGuards(AuthGuard)
-    async likingProduct(@User('userId') currentUserId: number, @Param('slug') slug: string ): Promise<ProductEntity>{ 
-        return  this.productService.likingProduct(currentUserId, slug);
+    async likingProduct(@User('userId') currentUserId: number, @Param('id') id: number ): Promise<ProductEntity>{ 
+        return  this.productService.likingProduct(currentUserId, +id);
     }
 
+    @ApiTags("products")
     @ApiBearerAuth()
-    @Delete(':slug/favorite')
+    @Delete('product/:id/favorite')
     @UseGuards(AuthGuard)
-    async disLikingProduct(@User('userId') currentUserId: number, @Param('slug') slug: string ): Promise<ProductEntity>{ 
-        return  this.productService.disLikingProduct(currentUserId, slug);
+    async disLikingProduct(@User('userId') currentUserId: number, @Param('id') id: number ): Promise<ProductEntity>{ 
+        return  this.productService.disLikingProduct(currentUserId, +id);
     }
 
-    @Get()
+    @ApiTags("products")
+    @Get('products')
     async findAll(): Promise<ProductEntity[]>{
 
         const products = await this.productService.findAll();
@@ -68,8 +74,9 @@ export class ProductController {
         return this.productService.findAll(currentUserId, query);
     }*/
     
+    @ApiTags('users')
     @ApiBearerAuth()
-    @Get('user/fav')
+    @Get('user/favorites')
     @UseGuards(AuthGuard)
     async userFav(@User('userId') currentUserId: number):Promise<ProductEntity[]>{
         return await this.productService.userFav(currentUserId);

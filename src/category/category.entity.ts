@@ -7,9 +7,6 @@ export class CategoryEntity{
     categoryId: number;
 
     @Column()
-    slug: string;
-
-    @Column()
     name: string;
 
     @Column({default: ''})

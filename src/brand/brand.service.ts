@@ -18,8 +18,8 @@ export class BrandService {
         return this.brandRepository.find();
     }
 
-    async getOneBrand(slug: string): Promise<BrandEntity> {
-        return this.brandRepository.findOne({where: {slug: slug } } );
+    async getOneBrand(id: number): Promise<BrandEntity> {
+        return this.brandRepository.findOne({where: {brandId: id } } );
     }
 
     async createBrand(creatBrandDTO: CreateBrandDTO):Promise<BrandEntity>{
@@ -33,13 +33,11 @@ export class BrandService {
 
         Object.assign(newBrand, creatBrandDTO);
 
-        newBrand.slug = this.getSlug(creatBrandDTO.name)
-
         return this.brandRepository.save(newBrand);
     }
 
-    async updateBrand(slug: string, updateBrandDTO: UpdateBrandDTO): Promise<BrandEntity>{
-        const brandBySlug = await this.brandRepository.findOne({where: {slug : slug}})
+    async updateBrand(id: number, updateBrandDTO: UpdateBrandDTO): Promise<BrandEntity>{
+        const brandBySlug = await this.brandRepository.findOne({where: {brandId : id}})
 
         if(!brandBySlug){
             throw new HttpException('Brand not found', HttpStatus.UNPROCESSABLE_ENTITY);
@@ -47,9 +45,6 @@ export class BrandService {
 
         Object.assign(brandBySlug, updateBrandDTO);
 
-        if(updateBrandDTO.name){
-            brandBySlug.slug = this.getSlug(brandBySlug.name);
-        }
 
         return this.brandRepository.save(brandBySlug);
     }

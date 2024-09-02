@@ -18,10 +18,6 @@ export class CategoryService {
         return this.categoryRepository.find();
     }
 
-    async getOneCategory(slug: string): Promise<CategoryEntity> {
-        return this.categoryRepository.findOne({where: {slug: slug } } );
-    }
-
     async createCategory(creatCategoryDTO: CreateCategoryDTO):Promise<CategoryEntity>{
         const categoryByName = await this.categoryRepository.findOne({where: {name : creatCategoryDTO.name} } )
 
@@ -33,13 +29,11 @@ export class CategoryService {
 
         Object.assign(newCatgory, creatCategoryDTO);
 
-        newCatgory.slug = this.getSlug(creatCategoryDTO.name)
-
         return this.categoryRepository.save(newCatgory);
     }
 
-    async updateCategory(slug: string, updateCategoryDTO: UpdateCategoryDTO): Promise<CategoryEntity>{
-        const categoryBySlug = await this.categoryRepository.findOne({where: {slug : slug}})
+    async updateCategory(id: number, updateCategoryDTO: UpdateCategoryDTO): Promise<CategoryEntity>{
+        const categoryBySlug = await this.categoryRepository.findOne({where: {categoryId : id}})
 
         if(!categoryBySlug){
             throw new HttpException('catgory not found', HttpStatus.UNPROCESSABLE_ENTITY);
@@ -47,10 +41,10 @@ export class CategoryService {
 
         Object.assign(categoryBySlug, updateCategoryDTO);
 
-        if(updateCategoryDTO.name){
-            categoryBySlug.slug = this.getSlug(categoryBySlug.name);
-        }
-
         return this.categoryRepository.save(categoryBySlug);
+    }
+
+    async getOneCategory(id: number):Promise<CategoryEntity>{
+        return await this.categoryRepository.findOne({where: {categoryId: id}})
     }
 }

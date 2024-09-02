@@ -16,7 +16,7 @@ export class AddressController {
     constructor( private readonly addressService: AddressService){}
 
     @ApiBearerAuth()
-    @Post("new_address")
+    @Post("users/address")
     @ApiBody({
         
         type: CreateAddressDTO,
@@ -29,7 +29,7 @@ export class AddressController {
     } 
 
     @ApiBearerAuth()
-    @Put("address/:id")
+    @Put("users/address/:id")
     @ApiParam({
         name: 'id',
         required: true,
@@ -45,7 +45,7 @@ export class AddressController {
     } 
 
     @ApiBearerAuth()
-    @Delete("address/:id")
+    @Delete("users/address/:id")
     @ApiParam({
         name: 'id',
         required: true,
@@ -57,7 +57,7 @@ export class AddressController {
     } 
 
     @ApiBearerAuth()
-    @Get("address")
+    @Get("users/addresses")
     @UsePipes(new ValidationPipe)
     @UseGuards(AuthGuard)
     async userAddress(@User() currentUser: UserDto):Promise<AddressEntity[]>{

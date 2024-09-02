@@ -7,22 +7,22 @@ import { AdminAuthGuard } from 'src/auth/Guards/auth.admin.guard';
 import { UpdateBrandDTO } from './DTO/updateBrand.Dto';
 
 @ApiTags("brands")
-@Controller('brand')
+@Controller()
 export class BrandController {
     constructor(private readonly brandService: BrandService){}
 
-    @Get('all')
+    @Get('brands')
     async getAllCategory():Promise<BrandEntity[]>{
         return this.brandService.getAllBrand();
     }
 
-    @Get(':slug')
-    async getOneCategory(@Param('slug') slug: string):Promise<BrandEntity>{
-        return this.brandService.getOneBrand(slug);
+    @Get('brand/:id')
+    async getOneCategory(@Param('id') id: number):Promise<BrandEntity>{
+        return this.brandService.getOneBrand(+id);
     }
 
     @ApiBearerAuth()
-    @Post()
+    @Post('brand')
     @ApiBody({
         type: CreateBrandDTO,
         description: "Body for creating Brand"
@@ -34,9 +34,9 @@ export class BrandController {
     } 
 
     @ApiBearerAuth()
-    @Put(':slug')
+    @Put('brand/:id')
     @ApiParam({
-        name: 'slug',
+        name: 'id',
         required: true,
     })
     @ApiBody({
@@ -44,8 +44,8 @@ export class BrandController {
         description: "Body for updating Brand"
     })
     @UseGuards(AdminAuthGuard)
-    async updateBrand(@Param('slug') slug:string, @Body() updateBrandDTO: UpdateBrandDTO):Promise<BrandEntity>{
-        return await this.brandService.updateBrand(slug, updateBrandDTO);
+    async updateBrand(@Param('id') id:number, @Body() updateBrandDTO: UpdateBrandDTO):Promise<BrandEntity>{
+        return await this.brandService.updateBrand(+id, updateBrandDTO);
     }
 
 }

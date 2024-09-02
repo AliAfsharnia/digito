@@ -7,23 +7,23 @@ import { CategoryEntity } from './category.entity';
 import { UpdateCategoryDTO } from './DTO/updateCategory.Dto';
 
 @ApiTags('category')
-@Controller('category')
+@Controller()
 export class CategoryController {
 
     constructor(private readonly categoryService: CategoryService){}
 
-    @Get('all')
+    @Get('categorys')
     async getAllCategory():Promise<CategoryEntity[]>{
         return this.categoryService.getAllCategory();
     }
 
-    @Get(':slug')
-    async getOneCategory(@Param('slug') slug: string):Promise<CategoryEntity>{
-        return this.categoryService.getOneCategory(slug);
+    @Get('category/:id')
+    async getOneCategory(@Param('id') id: string):Promise<CategoryEntity>{
+        return this.categoryService.getOneCategory(+id);
     }
 
     @ApiBearerAuth()
-    @Post()
+    @Post('category')
     @ApiBody({
         type: CreateCategoryDTO,
         description: "Body for creating Category"
@@ -35,9 +35,9 @@ export class CategoryController {
     } 
 
     @ApiBearerAuth()
-    @Put(':slug')
+    @Put('category/:id')
     @ApiParam({
-        name: 'slug',
+        name: 'id',
         required: true,
     })
     @ApiBody({
@@ -45,7 +45,7 @@ export class CategoryController {
         description: "Body for updating Category" 
     })
     @UseGuards(AdminAuthGuard)
-    async updateCategory(@Param('slug') slug, @Body() updateCategoryDTO: UpdateCategoryDTO):Promise<CategoryEntity>{
-        return await this.categoryService.updateCategory(slug ,updateCategoryDTO);
+    async updateCategory(@Param('id') id: string, @Body() updateCategoryDTO: UpdateCategoryDTO):Promise<CategoryEntity>{
+        return await this.categoryService.updateCategory(+id ,updateCategoryDTO);
     }
 }

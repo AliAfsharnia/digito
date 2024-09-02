@@ -37,8 +37,6 @@ export class ProductService {
 
         const newProduct = this.productRepository.create(createProductDTO)
 
-        newProduct.slug = this.getSlug(newProduct.title);
-
         newProduct.brand = brand;
 
         newProduct.category = category;
@@ -46,12 +44,12 @@ export class ProductService {
         return await this.productRepository.save(newProduct);
     }
 
-    async getProductBySlug(slug: string):Promise<ProductEntity>{
-        return this.productRepository.findOne({where:{slug: slug}})
+    async getProductById(id: number):Promise<ProductEntity>{
+        return this.productRepository.findOne({where:{productId: id}})
     }
 
-    async updateProduct(slug: string, updateProductDTO: updateProductDTO):Promise<ProductEntity>{
-        const product = await this.productRepository.findOne({where:{slug :slug}})
+    async updateProduct(id: number, updateProductDTO: updateProductDTO):Promise<ProductEntity>{
+        const product = await this.productRepository.findOne({where:{productId :id}})
 
         Object.assign(product, updateProductDTO);
     
@@ -63,15 +61,11 @@ export class ProductService {
             product.category = await this.categoryRepository.findOne({where:{categoryId: updateProductDTO.categoryId}});
         }
 
-        if(updateProductDTO.title){
-            product.slug = this.getSlug(product.title)
-        }
-
         return await this.productRepository.save(product);
     }
 
-    async likingProduct(userId: number, slug: string):Promise<ProductEntity>{
-        const product = await this.getProductBySlug(slug);
+    async likingProduct(userId: number, id: number):Promise<ProductEntity>{
+        const product = await this.getProductById(id);
         const user = await this.userRepository.findOne({where: {userId: userId}, relations: ['favorites']});
     
         const isNotFavorite = user.favorites.findIndex((productsInFavorites) => productsInFavorites.productId === product.productId) === -1;
@@ -87,8 +81,8 @@ export class ProductService {
         return product;
     }
     
-    async disLikingProduct(userId: number, slug: string):Promise<ProductEntity>{
-        const product = await this.getProductBySlug(slug);
+    async disLikingProduct(userId: number, id: number):Promise<ProductEntity>{
+        const product = await this.getProductById(id);
         const user = await this.userRepository.findOne({where: {userId: userId}, relations: ['favorites']});
     
         const productIndex = user.favorites.findIndex((productsInFavorites) => productsInFavorites.productId === product.productId);

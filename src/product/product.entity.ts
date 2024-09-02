@@ -10,9 +10,6 @@ export class ProductEntity{
     productId: number;
 
     @Column()
-    slug: string;
-    
-    @Column()
     title: string;
 
     @Column({default: 0})
