@@ -45,12 +45,6 @@ export class updateProductDTO{
     readonly description?: string;
 
     @ApiProperty({
-        example: 'string',
-        required: false
-    })
-    readonly seller?:string
-
-    @ApiProperty({
         example: 'string, string',
         required: false
     })

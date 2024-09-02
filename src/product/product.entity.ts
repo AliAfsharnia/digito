@@ -22,9 +22,6 @@ export class ProductEntity{
     favoritesCount: number;
 
     @Column({default: ''})
-    seller: string;
-
-    @Column({default: ''})
     garanty: string;
 
     @Column({default: ''})

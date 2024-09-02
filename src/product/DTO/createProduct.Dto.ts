@@ -51,12 +51,6 @@ export class CreateProductDTO{
     readonly description?: string;
 
     @ApiProperty({
-        example: 'string',
-        required: true
-    })
-    readonly seller:string
-
-    @ApiProperty({
         example: 'string, string',
         required: false
     })
