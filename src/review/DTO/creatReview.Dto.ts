@@ -26,7 +26,7 @@ export class CreateReviewDTO{
           required: true
        })
      @IsNotEmpty()
-     readonly description: string;
+     readonly context: string;
 
      @ApiProperty({
           example: 'string, string',
