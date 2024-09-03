@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { AdminAuthGuard } from 'src/auth/Guards/auth.admin.guard';
 import { ProductEntity } from './product.entity';
@@ -7,8 +7,9 @@ import { CreateProductDTO } from './DTO/createProduct.Dto';
 import { updateProductDTO } from './DTO/updateProduct.Dto';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { User } from 'src/user/decoratores/user.decorator';
-import { UserEntity } from 'src/user/user.entity';
-
+import { extname } from 'path';
+import { diskStorage } from 'multer';
+import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 
 @Controller()
 export class ProductController {
@@ -16,21 +17,28 @@ export class ProductController {
 
     @ApiTags("products")
     @ApiBearerAuth()
-    @Post('product/add')
+    @Post('product')
+    @UseInterceptors(AnyFilesInterceptor( {
+        storage: diskStorage({
+          destination: './uploads/product-pictures', 
+          filename: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+            cb(null, file.fieldname + '-' + uniqueSuffix + extname(file.originalname));
+          },
+        })
+      }))
+    @ApiConsumes('multipart/form-data')
     @ApiBody({
         type: CreateProductDTO,
-        description: 'Json structure for user object',
-        isArray: true,
     })
     @UseGuards(AdminAuthGuard)
-    async addProduct(@Body() createProductDTO: CreateProductDTO[]):Promise<ProductEntity[]>{
-        const products = await Promise.all(
-            createProductDTO.map(createProductDTO => 
-                this.productService.createProduct(createProductDTO)
-            )
-        );
-    
-        return products;
+    async addProduct(@Body() createProductDTO: CreateProductDTO, @UploadedFiles() profilePictures: Express.Multer.File[]):Promise<ProductEntity>{
+        
+        if(profilePictures){
+            createProductDTO.productImages = profilePictures;
+        }
+
+        return await this.productService.createProduct(createProductDTO);
     }
 
     @ApiTags("products")
@@ -45,7 +53,7 @@ export class ProductController {
         return await this.productService.updateProduct(id, updateProductDTO);
     }
 
-    @ApiTags("products")
+    @ApiTags("favorites")
     @ApiBearerAuth()
     @Post('product/:id/favorite')
     @UseGuards(AuthGuard)
@@ -53,7 +61,7 @@ export class ProductController {
         return  this.productService.likingProduct(currentUserId, +id);
     }
 
-    @ApiTags("products")
+    @ApiTags("favorites")
     @ApiBearerAuth()
     @Delete('product/:id/favorite')
     @UseGuards(AuthGuard)
@@ -74,7 +82,7 @@ export class ProductController {
         return this.productService.findAll(currentUserId, query);
     }*/
     
-    @ApiTags('users')
+    @ApiTags('favorites')
     @ApiBearerAuth()
     @Get('user/favorites')
     @UseGuards(AuthGuard)
@@ -82,3 +90,4 @@ export class ProductController {
         return await this.productService.userFav(currentUserId);
     }        
 }
+

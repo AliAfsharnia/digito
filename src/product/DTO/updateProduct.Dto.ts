@@ -48,7 +48,7 @@ export class updateProductDTO{
         example: 'string, string',
         required: false
     })
-    readonly images?: string[];
+    public imatges?: string[];
 
     @ApiProperty({
         example: 'string, string',

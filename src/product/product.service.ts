@@ -40,6 +40,15 @@ export class ProductService {
         newProduct.brand = brand;
 
         newProduct.category = category;
+
+        if(createProductDTO.productImages){
+            const productsImages = await Promise.all(
+                createProductDTO.productImages.map(profilePicture => 
+                    this.uploadFile(profilePicture)
+                )
+            );
+            newProduct.images = productsImages;
+        }
         
         return await this.productRepository.save(newProduct);
     }
@@ -157,5 +166,11 @@ export class ProductService {
        return products;
     }
 
-    
+    async uploadFile(file: Express.Multer.File): Promise<string> {
+        const filePath = `/uploads/product-pictures/${file.filename}`;
+        
+        const fileUrl = `${process.env.BASE_URL}${filePath}`;
+
+        return  fileUrl;
+    }
 }
