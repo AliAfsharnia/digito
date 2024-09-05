@@ -9,6 +9,8 @@ import { UpdateAddressDTO } from './DTO/updateAdress.dto';
 import { DeleteResult } from 'typeorm';
 import { UserEntity } from 'src/user/user.entity';
 import { UserDto } from 'src/user/DTO/user.Dto';
+import { CityEntity } from './city.entity';
+import { ProviceEntity } from './provice.entity';
 
 @ApiTags("address")
 @Controller()
@@ -63,6 +65,16 @@ export class AddressController {
     async userAddress(@User() currentUser: UserDto):Promise<AddressEntity[]>{
         return await this.addressService.userAddress(currentUser);
     } 
+
+    @Get("cityes")
+    async getCityes(): Promise<CityEntity[]>{
+        return this.addressService.getCityes();
+    }
+
+    @Get("provinces")
+    async getProvinces(): Promise<ProviceEntity[]>{
+        return this.addressService.getProvinces();
+    }
 }
 
 

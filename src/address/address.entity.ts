@@ -1,6 +1,7 @@
-import { ProductEntity } from "src/product/product.entity";
 import { UserEntity } from "src/user/user.entity";
-import {  Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {  Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ProviceEntity } from "./provice.entity";
+import { CityEntity } from "./city.entity";
 
 @Entity({name: 'addresses'})
 export class AddressEntity{
@@ -12,9 +13,6 @@ export class AddressEntity{
 
     @Column()
     state: string;
-    
-    @Column()
-    city: string;
 
     @Column()
     street: string;
@@ -22,7 +20,12 @@ export class AddressEntity{
     @Column()
     tag: string;
 
-    @ManyToOne(()=> UserEntity ,(user) => user.addresses , {eager : true})
+    @ManyToOne(()=> UserEntity ,(user) => user.addresses)
     user: UserEntity;
 
+    @ManyToOne(()=> CityEntity ,(city) => city.addresses)
+    city: CityEntity;
+    
+    @ManyToOne(()=> ProviceEntity ,(provice) => provice.addresses)
+    provice: ProviceEntity;
 }

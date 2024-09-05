@@ -6,10 +6,14 @@ import { CreateAddressDTO } from './DTO/createAddress.dto';
 import { UserEntity } from 'src/user/user.entity';
 import { UpdateAddressDTO } from './DTO/updateAdress.dto';
 import { UserDto } from 'src/user/DTO/user.Dto';
+import { ProviceEntity } from './provice.entity';
+import { CityEntity } from './city.entity';
 
 @Injectable()
 export class AddressService {
-    constructor(@InjectRepository(AddressEntity) private readonly addressRepository: Repository<AddressEntity>){}
+    constructor(@InjectRepository(AddressEntity) private readonly addressRepository: Repository<AddressEntity>,
+    @InjectRepository(ProviceEntity) private readonly proviceRepository: Repository<ProviceEntity>,
+    @InjectRepository(CityEntity) private readonly cityRepository: Repository<CityEntity>){}
     
     async createAddress(currentUser: UserEntity, createAddressrDTO: CreateAddressDTO): Promise<AddressEntity>{
         const newAddress = this.addressRepository.create();
@@ -46,5 +50,13 @@ export class AddressService {
 
     async userAddress(currentUser: UserDto): Promise<AddressEntity[]>{
         return await this.addressRepository.find({where: {user: currentUser}})
+    }
+
+    async getProvinces():Promise<ProviceEntity[]>{
+        return this.proviceRepository.find();
+    }
+
+    async getCityes():Promise<CityEntity[]>{
+        return this.cityRepository.find();
     }
 }
