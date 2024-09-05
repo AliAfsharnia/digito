@@ -1,9 +1,8 @@
 import { hash } from "bcrypt";
-import { Exclude } from "class-transformer";
 import { AddressEntity } from "src/address/address.entity";
 import { ProductEntity } from "src/product/product.entity";
 import { ReviewEntity } from "src/review/review.entity";
-import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'users'})
 export class UserEntity{
@@ -28,6 +27,7 @@ export class UserEntity{
     @Column({default: 'customer'})
     roll: string;
 
+    @BeforeUpdate()
     @BeforeInsert()
     async hashPassword(){
         this.password = await hash(this.password, 10)

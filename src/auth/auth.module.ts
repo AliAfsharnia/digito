@@ -5,10 +5,19 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/user.entity';
 import { jwtConstants } from './constants';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity]),JwtModule.register({
+  imports: [ MailerModule.forRoot({
+    transport: {
+      host: process.env.EMAIL_HOST,
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    },
+  }), TypeOrmModule.forFeature([UserEntity]),JwtModule.register({
     global: true,
     secret: jwtConstants.secret,
     signOptions: { expiresIn: '1h' },
