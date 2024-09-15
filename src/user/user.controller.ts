@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDTO } from './DTO/creatUser.Dto';
@@ -7,9 +7,10 @@ import { User } from './decoratores/user.decorator';
 import { UpdateUserDto } from './DTO/updateUser.Dto';
 import { AdminAuthGuard } from 'src/auth/Guards/auth.admin.guard';
 import { UserDto } from './DTO/user.Dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
+import { s3 } from 'src/s3.config';
+import * as multerS3 from 'multer-s3';
 
 @ApiTags("users")
 @Controller('user')
@@ -17,23 +18,34 @@ export class UserController {
     constructor(private readonly userService: UserService){}
 
     @Post()
-    @UseInterceptors(FileInterceptor('profilePicture', {
-        storage: diskStorage({
-          destination: './uploads/profile-pictures', 
-          filename: (req, file, cb) => {
-            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-            cb(null, file.fieldname + '-' + uniqueSuffix + extname(file.originalname));
-          },
-        })
-      }))
+    @UseInterceptors(
+        AnyFilesInterceptor({
+            storage: multerS3({
+              s3: s3,
+              bucket: process.env.LIARA_BUCKET_NAME,
+              acl: 'public-read',
+              key: (req, file, cb) => {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                const fileExtension = extname(file.originalname);
+                cb(null, `profile-pictures/${file.fieldname}-${uniqueSuffix}${fileExtension}`);
+              },
+            }),
+          }),
+      )
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         type: CreateUserDTO,
         description: "Body for creating User"
     })
     @UsePipes(new ValidationPipe)
-    async createUser(@Body() createUserDTO: CreateUserDTO, @UploadedFile() profilePicture: Express.Multer.File):Promise<UserDto>{
-        return await this.userService.createUser(createUserDTO, profilePicture);
+    async createUser(@Body() createUserDTO: CreateUserDTO, @UploadedFiles() profilePicture: S3File[]):Promise<UserDto>{
+
+        if (profilePicture) {
+            createUserDTO.image = profilePicture.map(file => file.location)[0];
+            console.log(createUserDTO);
+        }
+
+        return await this.userService.createUser(createUserDTO);
     }
 
     @ApiBearerAuth()
@@ -45,12 +57,30 @@ export class UserController {
 
     @ApiBearerAuth()
     @Put()
+    @UseInterceptors(
+        AnyFilesInterceptor({
+            storage: multerS3({
+              s3: s3,
+              bucket: process.env.LIARA_BUCKET_NAME,
+              acl: 'public-read',
+              key: (req, file, cb) => {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+                const fileExtension = extname(file.originalname);
+                cb(null, `profile-pictures/${file.fieldname}-${uniqueSuffix}${fileExtension}`);
+              },
+            }),
+          }),
+      )
+    @ApiConsumes('multipart/form-data')
     @ApiBody({
         type: UpdateUserDto,
         description: "Body for updating User"
     })
     @UseGuards(AuthGuard)
-    async updateUser(@User() currentUser, @Body() updateUserDto: UpdateUserDto):Promise<UserDto>{
+    async updateUser(@User() currentUser, @Body() updateUserDto: UpdateUserDto, @UploadedFiles() profilePicture: S3File[]):Promise<UserDto>{
+        if (profilePicture) {
+            updateUserDto.image = profilePicture.map(file => file.location)[0];
+        }
         return this.userService.updateUser(currentUser.userId ,updateUserDto)
     }
 
@@ -60,7 +90,5 @@ export class UserController {
     async isAdmin(@User() currentUser):Promise<UserDto>{
         return await this.userService.findById(currentUser.userId)
     }
-
-    
 }
 

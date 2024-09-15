@@ -22,11 +22,8 @@ export class UpdateUserDto{
        })
      readonly password: string;
 
-     @ApiProperty({
-          example: 'string',
-          required: false
-       })
-     readonly image?: string;
+     @ApiProperty({type: 'string', format: 'binary', description: 'Profile picture of the user' , required: false})
+     public image?: string;
 
      @ApiProperty({
           example: 'string',

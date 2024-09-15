@@ -8,7 +8,7 @@ import { BrandEntity } from 'src/brand/brand.entity';
 import { CategoryEntity } from 'src/category/category.entity';
 import { updateProductDTO } from './DTO/updateProduct.Dto';
 import { UserEntity } from 'src/user/user.entity';
-import { ALL } from 'dns';
+import { s3 } from 'src/s3.config';
 
 @Injectable()
 export class ProductService {
@@ -40,15 +40,6 @@ export class ProductService {
         newProduct.brand = brand;
 
         newProduct.category = category;
-
-        if(createProductDTO.productImages){
-            const productsImages = await Promise.all(
-                createProductDTO.productImages.map(profilePicture => 
-                    this.uploadFile(profilePicture)
-                )
-            );
-            newProduct.images = productsImages;
-        }
         
         return await this.productRepository.save(newProduct);
     }
@@ -164,13 +155,5 @@ export class ProductService {
         const products = await this.productRepository.find({where:{productId: In(productIds)}})
 
        return products;
-    }
-
-    async uploadFile(file: Express.Multer.File): Promise<string> {
-        const filePath = `/uploads/product-pictures/${file.filename}`;
-        
-        const fileUrl = `${process.env.BASE_URL}${filePath}`;
-
-        return  fileUrl;
     }
 }

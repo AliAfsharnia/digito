@@ -11,7 +11,7 @@ import { plainToInstance } from 'class-transformer';
 export class UserService {
     constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>, private dataSourse:DataSource){}
 
-    async createUser(createUserDto: CreateUserDTO, profilePic: Express.Multer.File): Promise<UserDto>{
+    async createUser(createUserDto: CreateUserDTO): Promise<UserDto>{
 
         const userByEmail = await this.userRepository.findOne({
             where:{email :createUserDto.email}
@@ -28,9 +28,6 @@ export class UserService {
         const newUser = new UserEntity();
 
         Object.assign(newUser,createUserDto);
-        if(profilePic){
-            newUser.image = await this.uploadFile(profilePic);
-        }
 
         const user = await this.userRepository.save(newUser);
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
@@ -65,13 +62,5 @@ export class UserService {
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
 
         return userDto;
-    }
-
-    async uploadFile(file: Express.Multer.File): Promise<string> {
-        const filePath = `/uploads/profile-pictures/${file.filename}`;
-        
-        const fileUrl = `${process.env.BASE_URL}${filePath}`;
-
-        return  fileUrl;
     }
 }

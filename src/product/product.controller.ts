@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConflictResponse, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { ProductService } from './product.service';
 import { AdminAuthGuard } from 'src/auth/Guards/auth.admin.guard';
 import { ProductEntity } from './product.entity';
@@ -8,8 +8,9 @@ import { updateProductDTO } from './DTO/updateProduct.Dto';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { User } from 'src/user/decoratores/user.decorator';
 import { extname } from 'path';
-import { diskStorage } from 'multer';
-import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { s3 } from 'src/s3.config';
+import * as multerS3 from 'multer-s3';
 
 @Controller()
 export class ProductController {
@@ -18,24 +19,29 @@ export class ProductController {
     @ApiTags("products")
     @ApiBearerAuth()
     @Post('product')
-    @UseInterceptors(AnyFilesInterceptor( {
-        storage: diskStorage({
-          destination: './uploads/product-pictures', 
-          filename: (req, file, cb) => {
-            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-            cb(null, file.fieldname + '-' + uniqueSuffix + extname(file.originalname));
-          },
-        })
-      }))
+    @UseInterceptors(
+        AnyFilesInterceptor({
+          storage: multerS3({
+            s3: s3,
+            bucket: process.env.LIARA_BUCKET_NAME,
+            acl: 'public-read',
+            key: (req, file, cb) => {
+              const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+              const fileExtension = extname(file.originalname);
+              cb(null, `product-pictures/${file.fieldname}-${uniqueSuffix}${fileExtension}`);
+            },
+          }),
+        }),
+      )
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         type: CreateProductDTO,
     })
     @UseGuards(AdminAuthGuard)
-    async addProduct(@Body() createProductDTO: CreateProductDTO, @UploadedFiles() profilePictures: Express.Multer.File[]):Promise<ProductEntity>{
+    async addProduct(@Body() createProductDTO: CreateProductDTO, @UploadedFiles() productImages: S3File[]):Promise<ProductEntity>{
         
-        if(profilePictures){
-            createProductDTO.productImages = profilePictures;
+        if (productImages && productImages.length > 0) {
+            createProductDTO.images = productImages.map(file => file.location);
         }
 
         return await this.productService.createProduct(createProductDTO);
@@ -48,8 +54,23 @@ export class ProductController {
     }
 
     @ApiTags("products")
+    @UseInterceptors(
+        AnyFilesInterceptor({
+          storage: multerS3({
+            s3: s3,
+            bucket: process.env.LIARA_BUCKET_NAME,
+            acl: 'public-read',
+            key: (req, file, cb) => {
+              const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+              const fileExtension = extname(file.originalname);
+              cb(null, `product-pictures/${file.fieldname}-${uniqueSuffix}${fileExtension}`);
+            },
+          }),
+        }),
+      )
+    @ApiConsumes('multipart/form-data')
     @Put('product/:id')
-    async updateProduct(@Param('id') id: number ,@Body() updateProductDTO: updateProductDTO):Promise<ProductEntity>{
+    async updateProduct(@Param('id') id: number ,@Body() updateProductDTO: updateProductDTO, @UploadedFiles() productImages: S3File[]):Promise<ProductEntity>{
         return await this.productService.updateProduct(id, updateProductDTO);
     }
 
@@ -90,4 +111,3 @@ export class ProductController {
         return await this.productService.userFav(currentUserId);
     }        
 }
-

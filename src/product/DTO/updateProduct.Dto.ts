@@ -44,11 +44,8 @@ export class updateProductDTO{
     })
     readonly description?: string;
 
-    @ApiProperty({
-        example: 'string, string',
-        required: false
-    })
-    public imatges?: string[];
+    @ApiProperty({isArray: true, type: 'string', format: 'binary', description: 'Profile picture of the user' , required: false})
+    public images?: string[];
 
     @ApiProperty({
         example: 'string, string',

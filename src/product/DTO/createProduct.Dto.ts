@@ -51,7 +51,7 @@ export class CreateProductDTO{
     readonly description?: string;
 
     @ApiProperty({isArray: true, type: 'string', format: 'binary', description: 'Profile picture of the user' , required: false})
-    public productImages?: Express.Multer.File[];
+    public images?: string[];
 
     @ApiProperty({
         required: false
