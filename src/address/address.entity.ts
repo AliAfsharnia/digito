@@ -9,10 +9,7 @@ export class AddressEntity{
     addressId: number;
 
     @Column()
-    country: string;
-
-    @Column()
-    state: string;
+    description: string;
 
     @Column()
     street: string;

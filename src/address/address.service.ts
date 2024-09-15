@@ -16,11 +16,27 @@ export class AddressService {
     @InjectRepository(CityEntity) private readonly cityRepository: Repository<CityEntity>){}
     
     async createAddress(currentUser: UserEntity, createAddressrDTO: CreateAddressDTO): Promise<AddressEntity>{
+        const city = await this.cityRepository.findOne({where:{id: createAddressrDTO.city}})
+
+        if(!city){
+            throw new HttpException("this city doesnt exist", HttpStatus.UNPROCESSABLE_ENTITY)
+        }
+
+        const province = await this.proviceRepository.findOne({where:{id: createAddressrDTO.province}})
+
+        if(!province){
+            throw new HttpException("this province doesnt exist", HttpStatus.UNPROCESSABLE_ENTITY)
+        }
+
         const newAddress = this.addressRepository.create();
 
         Object.assign(newAddress, createAddressrDTO);
 
         newAddress.user = currentUser;
+
+        newAddress.city = city;
+
+        newAddress.provice = province;
 
         return await this.addressRepository.save(newAddress)
     }
@@ -57,6 +73,9 @@ export class AddressService {
     }
 
     async getCityes():Promise<CityEntity[]>{
-        return this.cityRepository.find();
+        const cities  = await this.cityRepository.find();
+        //cities.map(city => city.provice = await this.proviceRepository.findOne({where: {id: province}}))
+
+        return cities
     }
 }
