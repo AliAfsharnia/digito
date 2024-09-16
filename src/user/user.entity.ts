@@ -1,5 +1,6 @@
 import { hash } from "bcrypt";
 import { AddressEntity } from "src/address/address.entity";
+import { OrderEntity } from "src/order/order.entity";
 import { ProductEntity } from "src/product/product.entity";
 import { ReviewEntity } from "src/review/review.entity";
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
@@ -41,6 +42,7 @@ export class UserEntity{
             this.password = await hash(this.password, 10);
         }
     }
+    
     @ManyToMany(() => ProductEntity )
     @JoinTable()
     favorites: ProductEntity[];
@@ -49,5 +51,9 @@ export class UserEntity{
     reviews: ReviewEntity;
 
     @OneToMany(() => AddressEntity, (address) => address.user)
-    addresses
+    addresses: AddressEntity;
+
+    @OneToMany(() => OrderEntity, (order) => order.user)
+    orders: OrderEntity
+
 }

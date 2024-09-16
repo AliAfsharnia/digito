@@ -83,7 +83,7 @@ export class UserController {
               },
             }),
           }),
-      )
+    )
     @ApiConsumes('multipart/form-data')
     @ApiBody({
         type: UpdateUserPhotoDto,

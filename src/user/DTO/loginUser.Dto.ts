@@ -6,8 +6,7 @@ export class LoginUserDTO{
      @ApiProperty({
           example: 'string',
           required: true
-       })
-       
+       })   
      @IsNotEmpty()
      @IsEmail()
      readonly email: string;
