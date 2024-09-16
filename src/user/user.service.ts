@@ -6,6 +6,7 @@ import { CreateUserDTO } from './DTO/creatUser.Dto';
 import { UpdateUserDto } from './DTO/updateUser.Dto';
 import { UserDto } from './DTO/user.Dto';
 import { plainToInstance } from 'class-transformer';
+import { UpdateUserPhotoDto } from './DTO/updateUserPhoto.Dto';
 
 @Injectable()
 export class UserService {
@@ -56,7 +57,31 @@ export class UserService {
     async updateUser(currentUserId :number, updateUserDto:UpdateUserDto):Promise<UserDto>{
         const currentUser = await this.userRepository.findOne({where:{userId : currentUserId}})
 
+        const userByEmail = await this.userRepository.findOne({
+            where:{email :updateUserDto.email}
+        })
+    
+        const userByUsername = await this.userRepository.findOne({
+            where:{username :updateUserDto.username}
+        })
+    
+        if( userByEmail || userByUsername){
+            throw new HttpException('email or username are taken', HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+    
+
         Object.assign(currentUser, updateUserDto);
+
+        const user = await this.userRepository.save(currentUser)
+        const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
+
+        return userDto;
+    }
+
+    async updateUserPhoto(currentUserId :number, updateUserPhotoDto:UpdateUserPhotoDto):Promise<UserDto>{
+        const currentUser = await this.userRepository.findOne({where:{userId : currentUserId}})    
+
+        Object.assign(currentUser, updateUserPhotoDto);
 
         const user = await this.userRepository.save(currentUser)
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });

@@ -27,12 +27,20 @@ export class UserEntity{
     @Column({default: 'customer'})
     roll: string;
 
+    private previousPassword: string;
+
     @BeforeUpdate()
-    @BeforeInsert()
-    async hashPassword(){
-        this.password = await hash(this.password, 10)
+    private storePreviousPassword() {
+        this.previousPassword = this.password;
     }
 
+    @BeforeUpdate()
+    @BeforeInsert()
+    async hashPassword() {
+        if (this.password !== this.previousPassword) {
+            this.password = await hash(this.password, 10);
+        }
+    }
     @ManyToMany(() => ProductEntity )
     @JoinTable()
     favorites: ProductEntity[];

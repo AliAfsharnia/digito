@@ -8,8 +8,6 @@ import * as express from 'express';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.use('/uploads', express.static(join(process.cwd(), 'uploads'))); 
-
   const config = new DocumentBuilder().addBearerAuth()
     .setTitle('Digito')
     .setDescription('The Digito API description')

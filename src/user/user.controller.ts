@@ -11,6 +11,7 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { extname } from 'path';
 import { s3 } from 'src/s3.config';
 import * as multerS3 from 'multer-s3';
+import { UpdateUserPhotoDto } from './DTO/updateUserPhoto.Dto';
 
 @ApiTags("users")
 @Controller('user')
@@ -57,6 +58,18 @@ export class UserController {
 
     @ApiBearerAuth()
     @Put()
+    @ApiBody({
+        type: UpdateUserDto,
+        description: "Body for updating User",
+    })
+    @UseGuards(AuthGuard)
+    @UsePipes(new ValidationPipe)
+    async updateUser(@User() currentUser, @Body() updateUserPhotoDto: UpdateUserPhotoDto):Promise<UserDto>{
+        return this.userService.updateUserPhoto(currentUser.userId ,updateUserPhotoDto)
+    }
+
+    @ApiBearerAuth()
+    @Put('avatar')
     @UseInterceptors(
         AnyFilesInterceptor({
             storage: multerS3({
@@ -73,15 +86,16 @@ export class UserController {
       )
     @ApiConsumes('multipart/form-data')
     @ApiBody({
-        type: UpdateUserDto,
-        description: "Body for updating User"
+        type: UpdateUserPhotoDto,
+        description: "Body for updating User",
     })
     @UseGuards(AuthGuard)
-    async updateUser(@User() currentUser, @Body() updateUserDto: UpdateUserDto, @UploadedFiles() profilePicture: S3File[]):Promise<UserDto>{
+    @UsePipes(new ValidationPipe)
+    async updateUserPhoto(@User() currentUser, @Body() updateUserPhotoDto: UpdateUserPhotoDto, @UploadedFiles() profilePicture: S3File[]):Promise<UserDto>{
         if (profilePicture) {
-            updateUserDto.image = profilePicture.map(file => file.location)[0];
+            updateUserPhotoDto.image = profilePicture.map(file => file.location)[0];
         }
-        return this.userService.updateUser(currentUser.userId ,updateUserDto)
+        return this.userService.updateUserPhoto(currentUser.userId ,updateUserPhotoDto)
     }
 
     @ApiBearerAuth()
