@@ -42,4 +42,63 @@ export class OrderService {
 
              return await this.orderProductRepository.save(newOrder);
     }
+
+    async myOrders(user: UserEntity): Promise<OrderEntity[]>{
+        return this.orderRepository.find({where: {user: user}});
+    }
+
+    async orderedProducts(user: UserEntity, orderId: number): Promise<OrderProductEntity[]>{
+        const order = await this.orderRepository.findOne({where: {orderId: orderId}});
+
+        if(!order){
+            throw new HttpException('this order doesnot exist!',HttpStatus.UNPROCESSABLE_ENTITY)
+        }
+
+        if(order.user != user){
+            throw new HttpException('not authorized', HttpStatus.UNAUTHORIZED)
+        }
+
+        return await this.orderProductRepository.find({where: {order: order}})
+    }
+
+    async orderedProductsAdmin(orderId: number): Promise<OrderProductEntity[]>{
+        const order = await this.orderRepository.findOne({where: {orderId: orderId}});
+
+        if(!order){
+            throw new HttpException('this order doesnot exist!',HttpStatus.UNPROCESSABLE_ENTITY)
+        }
+
+        return await this.orderProductRepository.find({where: {order: order}})
+    }
+
+    async closeOrder(user: UserEntity): Promise<OrderEntity>{
+        const pendingOrder = await this.orderRepository.findOne({ where: {user: user, status: 'pending'}})
+
+        if(!pendingOrder){
+            throw new HttpException('you have no pending order',HttpStatus.UNPROCESSABLE_ENTITY)
+        }
+
+        pendingOrder.status = "in progress";
+        return await this.orderRepository.save(pendingOrder);
+    }
+
+    async completeOrder(orderId: number): Promise<OrderEntity>{
+        const order = await this.orderRepository.findOne({where: {orderId: orderId}})
+
+        if(!order){
+            throw new HttpException('this order doesnot exist!',HttpStatus.UNPROCESSABLE_ENTITY)
+        }
+
+        if(order.status == 'pending' || order.status == 'complete'){
+            throw new HttpException('order most be on in progres status for this request!',HttpStatus.UNPROCESSABLE_ENTITY)
+        }
+
+        order.status = 'complete';
+
+        return await this.orderRepository.save(order);
+    }
+
+    async getAll(): Promise<OrderEntity[]>{
+        return await this.orderRepository.find()
+    }
 }
