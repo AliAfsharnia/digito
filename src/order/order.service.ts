@@ -20,12 +20,12 @@ export class OrderService {
                 pendingOrder.user = user;
                 pendingOrder.totalPrice = 0;
                 pendingOrder = await this.orderRepository.save(pendingOrder)
-                console.info("Order created Successfuly: ", pendingOrder.orderId)
+                console.info("Order created Successfully: ", pendingOrder.orderId)
              }
              const product = await this.ProductRepository.findOne({where: {productId: placeOrderDto.productProductId}})
 
              if(!product){
-                throw new HttpException('this product doesnt exist!',HttpStatus.UNPROCESSABLE_ENTITY)
+                throw new HttpException("this product doesn't exist!",HttpStatus.UNPROCESSABLE_ENTITY)
              }
 
              if(product.stockCount < placeOrderDto.quantity){
@@ -42,7 +42,7 @@ export class OrderService {
              newOrder.quantity = placeOrderDto.quantity;
              newOrder = await this.orderProductRepository.save(newOrder);
              
-            console.info("item added to order successfuly: ",newOrder.id )
+            console.info("item added to order successfully: ",newOrder.id )
 
              return newOrder
     }
@@ -57,7 +57,7 @@ export class OrderService {
         const order = await this.orderRepository.findOne({where: {orderId: orderId}, relations: ['orderProducts', 'user']});
 
         if(!order){
-            throw new HttpException('this order doesnot exist!',HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException("this order doesn't exist!",HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         if(order.user.userId != user.userId){
@@ -73,7 +73,7 @@ export class OrderService {
         const order = await this.orderRepository.findOne({where: {orderId: orderId}});
 
         if(!order){
-            throw new HttpException('this order doesnot exist!',HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException("this order doesn't exist!",HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         return await this.orderProductRepository.find({where: {order: order}})
@@ -89,7 +89,7 @@ export class OrderService {
         pendingOrder.status = "in progress";
         const result = await this.orderRepository.save(pendingOrder);
 
-        console.info("Status of order changed to (in progress) successfuly for user: ", user.userId)
+        console.info("Status of order changed to (in progress) successfully for user: ", user.userId)
 
         return result;
     }
@@ -98,7 +98,7 @@ export class OrderService {
         const order = await this.orderRepository.findOne({where: {orderId: orderId}})
 
         if(!order){
-            throw new HttpException('this order doesnot exist!',HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException("this order doesn't exist!",HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         if(order.status == 'pending' || order.status == 'complete'){
@@ -109,7 +109,7 @@ export class OrderService {
 
         const result = await this.orderRepository.save(order);
 
-        console.info("Status of order changed to (complete) successfuly order: ", order.orderId)
+        console.info("Status of order changed to (complete) successfully order: ", order.orderId)
 
         return result;
     }
@@ -126,7 +126,7 @@ export class OrderService {
         }
 
         if(!order){
-            throw new HttpException('this order doesnot exist!',HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException("this order doesn't exist!",HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         if(order.status == 'in progress' || order.status == 'complete'){
@@ -136,11 +136,11 @@ export class OrderService {
         const orderProduct = await this.orderProductRepository.findOne({ where: {id: orderProductId}});
 
         if(!orderProduct){
-            throw new HttpException('this item doesnot exist!',HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException("this item doesn't exist!",HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         if(orderProduct.order.orderId != order.orderId){
-            throw new HttpException('this item doesnot exist in this order!',HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException("this item doesn't exist in this order!",HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         const orderedProduct = orderProduct.product;

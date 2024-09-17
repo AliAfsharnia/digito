@@ -5,7 +5,7 @@ import {  Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 @Entity({name: 'reviews'})
 export class ReviewEntity{
     @PrimaryGeneratedColumn()
-    reviweId: number;
+    reviewId: number;
 
     @Column()
     subject: string;
@@ -22,7 +22,7 @@ export class ReviewEntity{
     @Column({default: false})
     approved: boolean;
 
-    @ManyToOne(()=> ProductEntity ,(product) => product.rewiews , {eager : true})
+    @ManyToOne(()=> ProductEntity ,(product) => product.reviews , {eager : true})
     product: ProductEntity;
 
     @ManyToOne(()=> UserEntity ,(user) => user.reviews , {eager : true})

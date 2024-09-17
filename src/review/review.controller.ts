@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Param, Post, UseGuards, Patch } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { ReviewService } from './review.service';
-import { CreateReviewDTO } from './DTO/creatReview.Dto';
+import { CreateReviewDTO } from './DTO/createReview.Dto';
 import { ReviewEntity } from './review.entity';
-import { User } from 'src/user/decoratores/user.decorator';
+import { User } from 'src/user/decorators/user.decorator';
 import { UserEntity } from 'src/user/user.entity';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { AdminAuthGuard } from 'src/auth/Guards/auth.admin.guard';

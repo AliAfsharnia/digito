@@ -42,7 +42,7 @@ export class CreateProductDTO{
         example: 'string',
         required: false
     })
-    readonly garanty?: string;
+    readonly guarantee?: string;
      
     @ApiProperty({
         example: 'string',

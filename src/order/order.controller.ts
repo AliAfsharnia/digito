@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { PlaceOrderDTO } from './DTO/placeOrder.DTO';
 import { OrderEntity } from './order.entity';
-import { User } from 'src/user/decoratores/user.decorator';
+import { User } from 'src/user/decorators/user.decorator';
 import { UserEntity } from 'src/user/user.entity';
 import { OrderService } from './order.service';
 import { OrderProductEntity } from './orderProduct.entity';

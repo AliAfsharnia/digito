@@ -4,39 +4,39 @@ import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateAddressDTO } from './DTO/createAddress.dto';
 import { UserEntity } from 'src/user/user.entity';
-import { UpdateAddressDTO } from './DTO/updateAdress.dto';
+import { UpdateAddressDTO } from './DTO/updateAddress.dto';
 import { UserDto } from 'src/user/DTO/user.Dto';
-import { ProviceEntity } from './provice.entity';
+import { ProvinceEntity } from './province.entity';
 import { CityEntity } from './city.entity';
 
 @Injectable()
 export class AddressService {
     constructor(@InjectRepository(AddressEntity) private readonly addressRepository: Repository<AddressEntity>,
-    @InjectRepository(ProviceEntity) private readonly proviceRepository: Repository<ProviceEntity>,
+    @InjectRepository(ProvinceEntity) private readonly provinceRepository: Repository<ProvinceEntity>,
     @InjectRepository(CityEntity) private readonly cityRepository: Repository<CityEntity>){}
     
-    async createAddress(currentUser: UserEntity, createAddressrDTO: CreateAddressDTO): Promise<AddressEntity>{
-        const city = await this.cityRepository.findOne({where:{id: createAddressrDTO.city}})
+    async createAddress(currentUser: UserEntity, createAddressDTO: CreateAddressDTO): Promise<AddressEntity>{
+        const city = await this.cityRepository.findOne({where:{id: createAddressDTO.city}})
 
         if(!city){
-            throw new HttpException("this city doesnt exist", HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException("this city doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
-        const province = await this.proviceRepository.findOne({where:{id: createAddressrDTO.province}})
+        const province = await this.provinceRepository.findOne({where:{id: createAddressDTO.province}})
 
         if(!province){
-            throw new HttpException("this province doesnt exist", HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException("this province doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         const newAddress = this.addressRepository.create();
 
-        Object.assign(newAddress, createAddressrDTO);
+        Object.assign(newAddress, createAddressDTO);
 
         newAddress.user = currentUser;
 
         newAddress.city = city;
 
-        newAddress.provice = province;
+        newAddress.province = province;
 
         const address = await this.addressRepository.save(newAddress)
 
@@ -80,14 +80,12 @@ export class AddressService {
         return await this.addressRepository.find({where: {user: currentUser}})
     }
 
-    async getProvinces():Promise<ProviceEntity[]>{
-        return this.proviceRepository.find();
+    async getProvinces():Promise<ProvinceEntity[]>{
+        return this.provinceRepository.find();
     }
 
-    async getCityes():Promise<CityEntity[]>{
+    async getCites():Promise<CityEntity[]>{
         const cities  = await this.cityRepository.find();
-        //cities.map(city => city.provice = await this.proviceRepository.findOne({where: {id: province}}))
-
         return cities
     }
 }

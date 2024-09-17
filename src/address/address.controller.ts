@@ -3,14 +3,14 @@ import { AddressService } from './address.service';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import { CreateAddressDTO } from './DTO/createAddress.dto';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
-import { User } from 'src/user/decoratores/user.decorator';
 import { AddressEntity } from './address.entity';
-import { UpdateAddressDTO } from './DTO/updateAdress.dto';
+import { UpdateAddressDTO } from './DTO/updateAddress.dto';
 import { DeleteResult } from 'typeorm';
 import { UserEntity } from 'src/user/user.entity';
 import { UserDto } from 'src/user/DTO/user.Dto';
 import { CityEntity } from './city.entity';
-import { ProviceEntity } from './provice.entity';
+import { ProvinceEntity } from './province.entity';
+import { User } from 'src/user/decorators/user.decorator';
 
 @ApiTags("address")
 @Controller()
@@ -66,13 +66,13 @@ export class AddressController {
         return await this.addressService.userAddress(currentUser);
     } 
 
-    @Get("cityes")
+    @Get("cites")
     async getCityes(): Promise<CityEntity[]>{
-        return this.addressService.getCityes();
+        return this.addressService.getCites();
     }
 
     @Get("provinces")
-    async getProvinces(): Promise<ProviceEntity[]>{
+    async getProvinces(): Promise<ProvinceEntity[]>{
         return this.addressService.getProvinces();
     }
 }

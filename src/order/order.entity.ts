@@ -1,5 +1,4 @@
 import { UserEntity } from "src/user/user.entity";
-import { ProductEntity } from "src/product/product.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToMany, BeforeUpdate } from "typeorm";
 import { OrderProductEntity } from "./orderProduct.entity";
 

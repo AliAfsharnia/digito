@@ -12,7 +12,7 @@ export class CategoryController {
 
     constructor(private readonly categoryService: CategoryService){}
 
-    @Get('categorys')
+    @Get('category')
     async getAllCategory():Promise<CategoryEntity[]>{
         return this.categoryService.getAllCategory();
     }
@@ -30,8 +30,8 @@ export class CategoryController {
     })
     @UsePipes(new ValidationPipe)
     @UseGuards(AdminAuthGuard)
-    async createCategory( @Body() creatCategoryDTO: CreateCategoryDTO):Promise<CategoryEntity>{
-        return await this.categoryService.createCategory(creatCategoryDTO);
+    async createCategory( @Body() createCategoryDTO: CreateCategoryDTO):Promise<CategoryEntity>{
+        return await this.categoryService.createCategory(createCategoryDTO);
     } 
 
     @ApiBearerAuth()

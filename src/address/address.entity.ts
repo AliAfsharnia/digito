@@ -1,6 +1,6 @@
 import { UserEntity } from "src/user/user.entity";
-import {  Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { ProviceEntity } from "./provice.entity";
+import {  Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ProvinceEntity } from "./province.entity";
 import { CityEntity } from "./city.entity";
 
 @Entity({name: 'addresses'})
@@ -23,6 +23,6 @@ export class AddressEntity{
     @ManyToOne(()=> CityEntity ,(city) => city.addresses)
     city: CityEntity;
     
-    @ManyToOne(()=> ProviceEntity ,(provice) => provice.addresses)
-    provice: ProviceEntity;
+    @ManyToOne(()=> ProvinceEntity ,(province) => province.addresses)
+    province: ProvinceEntity;
 }

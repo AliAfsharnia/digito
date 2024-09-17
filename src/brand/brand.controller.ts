@@ -29,8 +29,8 @@ export class BrandController {
     })
     @UsePipes(new ValidationPipe)
     @UseGuards(AdminAuthGuard)
-    async createBrand( @Body() creatBrandDTO: CreateBrandDTO):Promise<BrandEntity>{
-        return await this.brandService.createBrand(creatBrandDTO);
+    async createBrand( @Body() createBrandDTO: CreateBrandDTO):Promise<BrandEntity>{
+        return await this.brandService.createBrand(createBrandDTO);
     } 
 
     @ApiBearerAuth()

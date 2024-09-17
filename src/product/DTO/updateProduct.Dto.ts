@@ -36,7 +36,7 @@ export class updateProductDTO{
         example: ' ',
         required: false
     })
-    readonly garanty?: string;
+    readonly guarantee?: string;
      
     @ApiProperty({
         example: 'string',

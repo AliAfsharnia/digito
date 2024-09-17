@@ -3,7 +3,6 @@ import { AuthService } from './auth.service';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { LoginUserDTO } from 'src/user/DTO/loginUser.Dto';
 import { UserResponsIntereface } from 'src/user/type/userResponse.interface';
-import { UserEntity } from 'src/user/user.entity';
 import { ResetPasswordDTO } from './DTO/resetPassword.dto';
 import { UserDto } from 'src/user/DTO/user.Dto';
 
@@ -21,13 +20,13 @@ export class AuthController {
     async createUser(@Body() loginUserDTO: LoginUserDTO):Promise<UserResponsIntereface>{
         const user = await this.authService.signIn(loginUserDTO)
         delete user.password;
-        return await this.authService.BuildLoginRespose(user);
+        return await this.authService.BuildLoginResponse(user);
     }
 
     @Get('forgotpassword/:username')
     async forgotPassword(@Param('username') username: string): Promise<string>{
         await this.authService.forgotPassword(username);
-        return "you will recive an email soon!"
+        return "you will receive an email soon!"
     }
 
     @ApiBody({

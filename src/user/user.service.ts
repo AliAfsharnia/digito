@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserEntity } from './user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserDTO } from './DTO/creatUser.Dto';
+import { CreateUserDTO } from './DTO/createUser.Dto';
 import { UpdateUserDto } from './DTO/updateUser.Dto';
 import { UserDto } from './DTO/user.Dto';
 import { plainToInstance } from 'class-transformer';
@@ -10,7 +10,7 @@ import { UpdateUserPhotoDto } from './DTO/updateUserPhoto.Dto';
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>, private dataSourse:DataSource){}
+    constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>){}
 
     async createUser(createUserDto: CreateUserDTO): Promise<UserDto>{
 
@@ -33,7 +33,7 @@ export class UserService {
         const user = await this.userRepository.save(newUser);
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
 
-        console.info("User registered successfuly: ", userDto.userId);
+        console.info("User registered successfully: ", userDto.userId);
 
         return userDto;
     }
@@ -77,7 +77,7 @@ export class UserService {
         const user = await this.userRepository.save(currentUser)
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
 
-        console.info("User updated successfuly: ", userDto.userId);
+        console.info("User updated successfully: ", userDto.userId);
 
         return userDto;
     }
@@ -90,7 +90,7 @@ export class UserService {
         const user = await this.userRepository.save(currentUser)
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
 
-        console.info("User profile photo updated successfuly: ", userDto.userId);
+        console.info("User profile photo updated successfully: ", userDto.userId);
 
         return userDto;
     }

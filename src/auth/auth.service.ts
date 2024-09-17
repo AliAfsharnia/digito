@@ -22,7 +22,7 @@ export class AuthService {
     async createJwtToken(user: UserEntity): Promise<string>{
         const payload = { sub: user.userId, username: user.username };
         const token =  await this.jwtService.signAsync(payload)
-        console.info("token created successfuly for user: ", user.userId)
+        console.info("token created successfully for user: ", user.userId)
         return token;
 
     }
@@ -40,11 +40,11 @@ export class AuthService {
         throw new UnauthorizedException();
         }
         
-        console.info("User logged in successfuly:", user.userId)
+        console.info("User logged in successfully:", user.userId)
         return  user
     }
 
-    async BuildLoginRespose(user: UserEntity):Promise<UserResponsIntereface>{
+    async BuildLoginResponse(user: UserEntity):Promise<UserResponsIntereface>{
         return {user:
                 {...user,
                 token: await this.createJwtToken(user)
@@ -62,13 +62,13 @@ export class AuthService {
         const message = `Forgot your password? If you didn't forget your password, please ignore this email! link = ${process.env.BASE_URL}/resetPassword/${token}`;
 
         this.mailService.sendMail({
-            from: `Ali Afharnia<${process.env.EMAIL_USERNAME}>`,
+            from: `Ali Afsharnia<${process.env.EMAIL_USERNAME}>`,
             to: user.email,
             subject: `reset password`,
             text: message,
             });
 
-        console.info("Forgot password email send successfuly for user:", user.userId);
+        console.info("Forgot password email send successfully for user:", user.userId);
     }
 
     async resetPassword(token: string, resetPasswordDTO: ResetPasswordDTO): Promise<UserDto>{
@@ -85,7 +85,7 @@ export class AuthService {
 
         const userDto = plainToInstance(UserDto, newUser, { excludeExtraneousValues: true });
 
-        console.info("password changed successfuly for user:", user.userId);
+        console.info("password changed successfully for user:", user.userId);
 
         return userDto;
     }

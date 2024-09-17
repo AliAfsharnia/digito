@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Post, Put, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
-import { CreateUserDTO } from './DTO/creatUser.Dto';
+import { CreateUserDTO } from './DTO/createUser.Dto';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
-import { User } from './decoratores/user.decorator';
+import { User } from './decorators/user.decorator';
 import { UpdateUserDto } from './DTO/updateUser.Dto';
 import { AdminAuthGuard } from 'src/auth/Guards/auth.admin.guard';
 import { UserDto } from './DTO/user.Dto';

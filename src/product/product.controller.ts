@@ -6,7 +6,7 @@ import { ProductEntity } from './product.entity';
 import { CreateProductDTO } from './DTO/createProduct.Dto';
 import { updateProductDTO } from './DTO/updateProduct.Dto';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
-import { User } from 'src/user/decoratores/user.decorator';
+import { User } from 'src/user/decorators/user.decorator';
 import { extname } from 'path';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { s3 } from 'src/s3.config';
