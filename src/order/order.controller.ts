@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { PlaceOrderDTO } from './DTO/placeOrder.DTO';
@@ -23,7 +23,11 @@ export class OrderController {
         isArray: true
     })
     async placeOrder(@User() user: UserEntity, @Body() placeOrderDto: PlaceOrderDTO[]): Promise<OrderProductEntity[]>{
-        const orders = await Promise.all(placeOrderDto.map( placeOrderDto => this.orderService.placeOrder(user, placeOrderDto)))
+        let orders: OrderProductEntity[] = []
+        for (const order of placeOrderDto) {
+            orders.push(await this.orderService.placeOrder(user, order));
+          }
+
         return orders
     }
 
@@ -73,5 +77,13 @@ export class OrderController {
     @UseGuards(AdminAuthGuard)
     async getAll(): Promise<OrderEntity[]>{
         return await this.orderService.getAll();
+    }
+
+    @ApiTags("orders")
+    @Delete('order/:orderid/:itemid')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard)
+    async removeFromOrder(@User() user: UserEntity, @Param('orderid') orderId: number, @Param('itemid') itemId: number): Promise<OrderEntity>{
+        return await this.orderService.removeFromOrder(user, orderId, itemId); 
     }
 }

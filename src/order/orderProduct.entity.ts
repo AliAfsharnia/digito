@@ -7,10 +7,10 @@ export class OrderProductEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => OrderEntity, (order) => order.orderProducts)
+    @ManyToOne(() => OrderEntity, (order) => order.orderProducts, {eager : true})
     order: OrderEntity;
 
-    @ManyToOne(() => ProductEntity)
+    @ManyToOne(() => ProductEntity, {eager : true})
     product: ProductEntity;
 
     @Column()

@@ -16,7 +16,7 @@ export class OrderService {
              var pendingOrder = await this.orderRepository.findOne({ where: {user: user, status: "pending"}})
 
              if(!pendingOrder){
-                pendingOrder = await this.orderRepository.create();
+                pendingOrder = this.orderRepository.create();
                 pendingOrder.user = user;
                 pendingOrder.totalPrice = 0;
                 pendingOrder = await this.orderRepository.save(pendingOrder)
@@ -31,34 +31,40 @@ export class OrderService {
                 throw new HttpException('this product quantity is less then request!',HttpStatus.UNPROCESSABLE_ENTITY)
              }
              
-             product.stockCount = product.stockCount - placeOrderDto.quantity;
-             console.log('after adding', pendingOrder.totalPrice);
+             product.stockCount = (product.stockCount - placeOrderDto.quantity);
+             console.log('before adding', pendingOrder.totalPrice);
              pendingOrder.totalPrice = Number(pendingOrder.totalPrice) + (Number(product.price) * Number(placeOrderDto.quantity))
-             console.log('before adding: ', pendingOrder.totalPrice);
-             const newOrder = await this.orderProductRepository.create();
+             console.log('after adding: ', pendingOrder.totalPrice);
+             let newOrder = this.orderProductRepository.create();
              newOrder.product = await this.ProductRepository.save(product);
              newOrder.order = await this.orderRepository.save(pendingOrder);
              newOrder.quantity = placeOrderDto.quantity;
-
-             return await this.orderProductRepository.save(newOrder);
+             newOrder = await this.orderProductRepository.save(newOrder);
+    
+             return newOrder
     }
 
     async myOrders(user: UserEntity): Promise<OrderEntity[]>{
-        return this.orderRepository.find({where: {user: user}});
+        const order =  await this.orderRepository.find({where: {user: user}});
+        console.log(order);
+
+        return order;
     }
 
     async orderedProducts(user: UserEntity, orderId: number): Promise<OrderProductEntity[]>{
-        const order = await this.orderRepository.findOne({where: {orderId: orderId}});
+        const order = await this.orderRepository.findOne({where: {orderId: orderId}, relations: ['orderProducts', 'user']});
 
         if(!order){
             throw new HttpException('this order doesnot exist!',HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
-        if(order.user != user){
+        if(order.user.userId != user.userId){
             throw new HttpException('not authorized', HttpStatus.UNAUTHORIZED)
         }
 
-        return await this.orderProductRepository.find({where: {order: order}})
+        const items = order.orderProducts;
+
+        return items
     }
 
     async orderedProductsAdmin(orderId: number): Promise<OrderProductEntity[]>{
@@ -90,7 +96,7 @@ export class OrderService {
         }
 
         if(order.status == 'pending' || order.status == 'complete'){
-            throw new HttpException('order most be on in progres status for this request!',HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException('order most be on (in progress) status for this request!',HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         order.status = 'complete';
@@ -100,5 +106,43 @@ export class OrderService {
 
     async getAll(): Promise<OrderEntity[]>{
         return await this.orderRepository.find()
+    }
+
+    async removeFromOrder(user: UserEntity, OrderID: number, orderProductId: number): Promise<OrderEntity>{
+        const order = await this.orderRepository.findOne({where: {orderId: OrderID}})
+
+        if(order.user.userId != user.userId){
+            throw new HttpException('not authorized', HttpStatus.UNAUTHORIZED)
+        }
+
+        if(!order){
+            throw new HttpException('this order doesnot exist!',HttpStatus.UNPROCESSABLE_ENTITY)
+        }
+
+        if(order.status == 'in progress' || order.status == 'complete'){
+            throw new HttpException('order most be on (pending) status for this request!',HttpStatus.UNPROCESSABLE_ENTITY)
+        }
+
+        const orderProduct = await this.orderProductRepository.findOne({ where: {id: orderProductId}});
+
+        if(!orderProduct){
+            throw new HttpException('this item doesnot exist!',HttpStatus.UNPROCESSABLE_ENTITY)
+        }
+
+        if(orderProduct.order.orderId != order.orderId){
+            throw new HttpException('this item doesnot exist in this order!',HttpStatus.UNPROCESSABLE_ENTITY)
+        }
+
+        const orderedProduct = orderProduct.product;
+
+        orderedProduct.stockCount = Number(orderedProduct.stockCount) + Number(orderProduct.quantity)
+
+        await this.ProductRepository.save(orderedProduct);
+
+        order.totalPrice = Number(order.totalPrice) - ( Number(orderedProduct.price) * Number(orderProduct.quantity))
+
+        await this.orderProductRepository.delete(orderProduct);
+
+        return await this.orderRepository.save(order)
     }
 }

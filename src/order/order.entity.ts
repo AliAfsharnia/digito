@@ -8,12 +8,12 @@ export class OrderEntity {
     @PrimaryGeneratedColumn()
     orderId: number;
 
-    @ManyToOne(() => UserEntity, (user) => user.orders)
+    @ManyToOne(() => UserEntity, (user) => user.orders, {eager : true})
     @JoinColumn({ name: 'userId' })
     user: UserEntity;
 
-    @OneToMany(() => OrderProductEntity,(order) => order.order)
-    orderProducts: OrderProductEntity;
+    @OneToMany(() => OrderProductEntity,(order) => order.order,)
+    orderProducts: OrderProductEntity[];
 
     @Column({ type: 'decimal' })
     totalPrice: number;
