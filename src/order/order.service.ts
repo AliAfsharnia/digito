@@ -20,6 +20,7 @@ export class OrderService {
                 pendingOrder.user = user;
                 pendingOrder.totalPrice = 0;
                 pendingOrder = await this.orderRepository.save(pendingOrder)
+                console.info("Order created Successfuly: ", pendingOrder.orderId)
              }
              const product = await this.ProductRepository.findOne({where: {productId: placeOrderDto.productProductId}})
 
@@ -40,13 +41,14 @@ export class OrderService {
              newOrder.order = await this.orderRepository.save(pendingOrder);
              newOrder.quantity = placeOrderDto.quantity;
              newOrder = await this.orderProductRepository.save(newOrder);
-    
+             
+            console.info("item added to order successfuly: ",newOrder.id )
+
              return newOrder
     }
 
     async myOrders(user: UserEntity): Promise<OrderEntity[]>{
         const order =  await this.orderRepository.find({where: {user: user}});
-        console.log(order);
 
         return order;
     }
@@ -85,7 +87,11 @@ export class OrderService {
         }
 
         pendingOrder.status = "in progress";
-        return await this.orderRepository.save(pendingOrder);
+        const result = await this.orderRepository.save(pendingOrder);
+
+        console.info("Status of order changed to (in progress) successfuly for user: ", user.userId)
+
+        return result;
     }
 
     async completeOrder(orderId: number): Promise<OrderEntity>{
@@ -101,7 +107,11 @@ export class OrderService {
 
         order.status = 'complete';
 
-        return await this.orderRepository.save(order);
+        const result = await this.orderRepository.save(order);
+
+        console.info("Status of order changed to (complete) successfuly order: ", order.orderId)
+
+        return result;
     }
 
     async getAll(): Promise<OrderEntity[]>{
@@ -142,6 +152,8 @@ export class OrderService {
         order.totalPrice = Number(order.totalPrice) - ( Number(orderedProduct.price) * Number(orderProduct.quantity))
 
         await this.orderProductRepository.delete(orderProduct);
+
+        console.info("item deleted from the order successfully: ", order.orderId)
 
         return await this.orderRepository.save(order)
     }

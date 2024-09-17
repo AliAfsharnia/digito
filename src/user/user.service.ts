@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserEntity } from './user.entity';
-import { DataSource, EntitySchema, RelationQueryBuilder, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDTO } from './DTO/creatUser.Dto';
 import { UpdateUserDto } from './DTO/updateUser.Dto';
@@ -32,6 +32,8 @@ export class UserService {
 
         const user = await this.userRepository.save(newUser);
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
+
+        console.info("User registered successfuly: ", userDto.userId);
 
         return userDto;
     }
@@ -75,6 +77,8 @@ export class UserService {
         const user = await this.userRepository.save(currentUser)
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
 
+        console.info("User updated successfuly: ", userDto.userId);
+
         return userDto;
     }
 
@@ -85,6 +89,8 @@ export class UserService {
 
         const user = await this.userRepository.save(currentUser)
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
+
+        console.info("User profile photo updated successfuly: ", userDto.userId);
 
         return userDto;
     }

@@ -29,7 +29,11 @@ export class CategoryService {
 
         Object.assign(newCatgory, creatCategoryDTO);
 
-        return this.categoryRepository.save(newCatgory);
+        const category = await this.categoryRepository.save(newCatgory);
+
+        console.info("category created successfuly: ", category.categoryId)
+
+        return category;
     }
 
     async updateCategory(id: number, updateCategoryDTO: UpdateCategoryDTO): Promise<CategoryEntity>{
@@ -41,7 +45,11 @@ export class CategoryService {
 
         Object.assign(categoryBySlug, updateCategoryDTO);
 
-        return this.categoryRepository.save(categoryBySlug);
+        const category = await this.categoryRepository.save(categoryBySlug);
+
+        console.info("category updated successfuly: ", category.categoryId)
+        
+        return category
     }
 
     async getOneCategory(id: number):Promise<CategoryEntity>{

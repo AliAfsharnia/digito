@@ -41,7 +41,11 @@ export class ProductService {
 
         newProduct.category = category;
         
-        return await this.productRepository.save(newProduct);
+        const result = await this.productRepository.save(newProduct);
+
+        console.info("Product created successfuly: ", result.productId)
+
+        return result;
     }
 
     async getProductById(id: number):Promise<ProductEntity>{
@@ -61,7 +65,11 @@ export class ProductService {
             product.category = await this.categoryRepository.findOne({where:{categoryId: updateProductDTO.categoryId}});
         }
 
-        return await this.productRepository.save(product);
+        const result = await this.productRepository.save(product);
+
+        console.info("Product updated successfuly: ", result.productId)
+
+        return result;
     }
 
     async likingProduct(userId: number, id: number):Promise<ProductEntity>{
@@ -77,7 +85,10 @@ export class ProductService {
             await this.productRepository.save(product);
             await this.userRepository.save(user)
         }    
-                                             
+        
+        console.info("Product added to favorited successfuly for user: ", user.userId)
+        console.info("Product favorites increased successfuly for product: ", product.productId)
+
         return product;
     }
     
@@ -95,6 +106,9 @@ export class ProductService {
             await this.userRepository.save(user)
         }   
     
+        console.info("Product removed to favorited successfuly for user: ", user.userId)
+        console.info("Product favorites decreased successfuly for product: ", product.productId)
+
         return product;
     }
 

@@ -38,7 +38,11 @@ export class AddressService {
 
         newAddress.provice = province;
 
-        return await this.addressRepository.save(newAddress)
+        const address = await this.addressRepository.save(newAddress)
+
+        console.info("address created successfully: ", address.addressId)
+
+        return address
     }
 
     async updateAddress(currentUserId: number, addressId: number, updateAddressDTo: UpdateAddressDTO): Promise<AddressEntity>{
@@ -51,7 +55,11 @@ export class AddressService {
 
         Object.assign(address, updateAddressDTo);
 
-        return await this.addressRepository.save(address);
+        const result = await this.addressRepository.save(address);
+
+        console.info("address updated successfully: ", address.addressId)
+
+        return result;
     }
 
     async deleteAddress(currentUserId: number, addressId: number): Promise< DeleteResult >{
@@ -61,7 +69,11 @@ export class AddressService {
             throw new HttpException('not authorized', HttpStatus.UNAUTHORIZED)
         }
 
-        return this.addressRepository.delete(address);
+        const result = this.addressRepository.delete(address);
+
+        console.info("address deleted successfully: ", address.addressId)
+
+        return result;
     }
 
     async userAddress(currentUser: UserDto): Promise<AddressEntity[]>{

@@ -22,6 +22,7 @@ export class AuthMiddleware implements NestMiddleware{
             req.user = user;
             next()
         }catch(err){
+            console.error("Token not verified!", err)
             req.user = null;
             next()
         }

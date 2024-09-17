@@ -29,7 +29,11 @@ export class ReviewService {
 
         newReview.product = product;
 
-        return await this.reviewRepository.save(newReview);
+        const result = await this.reviewRepository.save(newReview);
+
+        console.info("Review created successfuly: ", result.reviweId)
+
+        return result;
     }
 
     async getProductReviews(id: number): Promise<ReviewEntity[]>{
@@ -46,7 +50,11 @@ export class ReviewService {
 
         review.approved = true;
 
-        return await this.reviewRepository.save(review);
+        const result = await this.reviewRepository.save(review);
+
+        console.info("Review approved successfuly: ", result.reviweId)
+
+        return result;
     }
 
     async unapproved(): Promise<ReviewEntity[]>{

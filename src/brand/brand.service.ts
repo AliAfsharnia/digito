@@ -33,7 +33,11 @@ export class BrandService {
 
         Object.assign(newBrand, creatBrandDTO);
 
-        return this.brandRepository.save(newBrand);
+        const brand = await this.brandRepository.save(newBrand);
+
+        console.info("brand created successfuly: ", brand.brandId)
+
+        return brand;
     }
 
     async updateBrand(id: number, updateBrandDTO: UpdateBrandDTO): Promise<BrandEntity>{
@@ -46,6 +50,10 @@ export class BrandService {
         Object.assign(brandBySlug, updateBrandDTO);
 
 
-        return this.brandRepository.save(brandBySlug);
+        const brand = await this.brandRepository.save(brandBySlug);
+
+        console.info("brand updated successfuly: ", brand.brandId)
+        
+        return brand
     }
 }

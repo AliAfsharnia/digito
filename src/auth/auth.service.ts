@@ -12,6 +12,7 @@ import { jwtConstants } from './constants';
 import { ResetPasswordDTO } from './DTO/resetPassword.dto';
 import { UserDto } from 'src/user/DTO/user.Dto';
 import { plainToInstance } from 'class-transformer';
+import { CostExplorer } from 'aws-sdk';
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,9 @@ export class AuthService {
 
     async createJwtToken(user: UserEntity): Promise<string>{
         const payload = { sub: user.userId, username: user.username };
-        return  await this.jwtService.signAsync(payload)
+        const token =  await this.jwtService.signAsync(payload)
+        console.info("token created successfuly for user: ", user.userId)
+        return token;
 
     }
 
@@ -37,6 +40,7 @@ export class AuthService {
         throw new UnauthorizedException();
         }
         
+        console.info("User logged in successfuly:", user.userId)
         return  user
     }
 
@@ -63,6 +67,8 @@ export class AuthService {
             subject: `reset password`,
             text: message,
             });
+
+        console.info("Forgot password email send successfuly for user:", user.userId);
     }
 
     async resetPassword(token: string, resetPasswordDTO: ResetPasswordDTO): Promise<UserDto>{
@@ -78,6 +84,8 @@ export class AuthService {
         const newUser= await this.userRepository.save(user);
 
         const userDto = plainToInstance(UserDto, newUser, { excludeExtraneousValues: true });
+
+        console.info("password changed successfuly for user:", user.userId);
 
         return userDto;
     }
