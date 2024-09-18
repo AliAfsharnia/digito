@@ -26,7 +26,7 @@ export class UserEntity{
     password: string;
 
     @Column({default: 'customer'})
-    roll: string;
+    role: string;
 
     private previousPassword: string;
 

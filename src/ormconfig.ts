@@ -4,10 +4,10 @@ dotenv.config();
 
 const config: PostgresConnectionOptions = {
     type: 'postgres',
-    host: 'digito',    
+    host: 'localhost',    
     port: 5432,
-    username: 'root',
-    password: 'TREUDBCqWNQ9zV5LaDxBTmjQ',    
+    username: 'postgres',
+    password: '123',    
     database: 'digito',
     entities: [ __dirname +'/**/*.entity{.ts,.js}'],
     synchronize: false,

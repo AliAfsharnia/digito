@@ -18,37 +18,6 @@ import { UpdateUserPhotoDto } from './DTO/updateUserPhoto.Dto';
 export class UserController {
     constructor(private readonly userService: UserService){}
 
-    @Post()
-    @UseInterceptors(
-        AnyFilesInterceptor({
-            storage: multerS3({
-              s3: s3,
-              bucket: process.env.LIARA_BUCKET_NAME,
-              acl: 'public-read',
-              key: (req, file, cb) => {
-                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-                const fileExtension = extname(file.originalname);
-                cb(null, `profile-pictures/${file.fieldname}-${uniqueSuffix}${fileExtension}`);
-              },
-            }),
-          }),
-      )
-    @ApiConsumes('multipart/form-data')
-    @ApiBody({
-        type: CreateUserDTO,
-        description: "Body for creating User"
-    })
-    @UsePipes(new ValidationPipe)
-    async createUser(@Body() createUserDTO: CreateUserDTO, @UploadedFiles() profilePicture: S3File[]):Promise<UserDto>{
-
-        if (profilePicture) {
-            createUserDTO.image = profilePicture.map(file => file.location)[0];
-            console.log(createUserDTO);
-        }
-
-        return await this.userService.createUser(createUserDTO);
-    }
-
     @ApiBearerAuth()
     @Get()
     @UseGuards(AuthGuard)

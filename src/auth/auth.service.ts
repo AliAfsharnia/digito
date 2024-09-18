@@ -12,7 +12,7 @@ import { jwtConstants } from './constants';
 import { ResetPasswordDTO } from './DTO/resetPassword.dto';
 import { UserDto } from 'src/user/DTO/user.Dto';
 import { plainToInstance } from 'class-transformer';
-import { CostExplorer } from 'aws-sdk';
+import { CreateUserDTO } from 'src/user/DTO/createUser.Dto';
 
 @Injectable()
 export class AuthService {
@@ -27,8 +27,33 @@ export class AuthService {
 
     }
 
-    async signIn(loginUserDto: LoginUserDTO): Promise<UserEntity> {
-        const user = await this.userRepository.findOne({where: {email: loginUserDto.email}, select:{userId: true,bio: true, email: true,username: true,image: true, roll: true,password: true}});
+    async createUser(createUserDto: CreateUserDTO): Promise<UserEntity>{
+
+        const userByEmail = await this.userRepository.findOne({
+            where:{email :createUserDto.email}
+        })
+    
+        const userByUsername = await this.userRepository.findOne({
+            where:{username :createUserDto.username}
+        })
+    
+        if( userByEmail || userByUsername){
+            throw new HttpException('email or username are taken', HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+    
+        const newUser = new UserEntity();
+
+        Object.assign(newUser,createUserDto);
+
+        const user = await this.userRepository.save(newUser);
+
+        console.info("User registered successfully: ", user.userId);
+
+        return user;
+    }
+
+    async login(loginUserDto: LoginUserDTO): Promise<UserEntity> {
+        const user = await this.userRepository.findOne({where: {email: loginUserDto.email}, select:{userId: true,bio: true, email: true,username: true,image: true, role: true,password: true}});
         if (!user) {
             throw new UnauthorizedException();
         }    
@@ -52,8 +77,8 @@ export class AuthService {
             }
     }
 
-    async forgotPassword(username: string): Promise<void>{
-        const user = await this.userRepository.findOne({where: {username: username}})
+    async forgotPassword(email: string): Promise<void>{
+        const user = await this.userRepository.findOne({where: {email: email}})
 
         if(!user){
             throw new HttpException("user not found!", HttpStatus.UNPROCESSABLE_ENTITY)
