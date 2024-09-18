@@ -12,7 +12,7 @@ export class ReviewService {
     @InjectRepository(ProductEntity) private readonly productRepository: Repository<ProductEntity>){}
 
     async createReview(currentUser: UserEntity, id: number, createReviewDTO: CreateReviewDTO): Promise<ReviewEntity>{
-        const product = await this.productRepository.findOne({where: {productId: id}})
+        const product = await this.productRepository.findOne({where: {id: id}})
 
         if(!product){
             throw new HttpException("this product doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
@@ -28,28 +28,28 @@ export class ReviewService {
 
         const result = await this.reviewRepository.save(newReview);
 
-        console.info("Review created successfully: ", result.reviewId);
+        console.info("Review created successfully: ", result.id);
 
         return result;
     }
 
     async getProductReviews(id: number): Promise<ReviewEntity[]>{
-        const product = await this.productRepository.findOne({where: {productId: id}})
+        const product = await this.productRepository.findOne({where: {id: id}})
         const reviews = await this.reviewRepository.createQueryBuilder('reviews')
-        .where('reviews."productProductId" = :productId', { productId: product.productId })
+        .where('reviews."productid" = :id', { id: product.id })
         .getMany();
 
         return  reviews;
     }
 
     async approve(id: string): Promise<ReviewEntity>{
-        const review = await this.reviewRepository.findOne({where: {reviewId: +id}});
+        const review = await this.reviewRepository.findOne({where: {id: +id}});
 
         review.approved = true;
 
         const result = await this.reviewRepository.save(review);
 
-        console.info("Review approved successfully: ", result.reviewId)
+        console.info("Review approved successfully: ", result.id)
 
         return result;
     }

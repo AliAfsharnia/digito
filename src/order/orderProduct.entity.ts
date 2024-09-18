@@ -13,6 +13,9 @@ export class OrderProductEntity {
     @ManyToOne(() => ProductEntity, {eager : true})
     product: ProductEntity;
 
-    @Column()
-    quantity: number;  
+    @Column({ default: 0})
+    quantity: number;
+    
+    @Column({ type: 'decimal' ,default: 0})
+    totalPrice: number;
 }

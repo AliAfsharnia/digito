@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateCategoryDTO } from './DTO/createCategory.Dto';
 import { UpdateCategoryDTO } from './DTO/updateCategory.Dto';
 import slugify from 'slugify';
+import { UpdateBrandPhotoDto } from 'src/brand/DTO/updateBrandPhoto.Dto';
 
 @Injectable()
 export class CategoryService {
@@ -18,41 +19,57 @@ export class CategoryService {
         return this.categoryRepository.find();
     }
 
-    async createCategory(creatCategoryDTO: CreateCategoryDTO):Promise<CategoryEntity>{
-        const categoryByName = await this.categoryRepository.findOne({where: {name : creatCategoryDTO.name} } )
+    async createCategory(createCategoryDTO: CreateCategoryDTO):Promise<CategoryEntity>{
+        const categoryByName = await this.categoryRepository.findOne({where: {name : createCategoryDTO.name} } )
 
         if(categoryByName){
             throw new HttpException('name is taken', HttpStatus.UNPROCESSABLE_ENTITY);
         }
         
-        const newCatgory= new CategoryEntity();
+        const newCategory= new CategoryEntity();
 
-        Object.assign(newCatgory, creatCategoryDTO);
+        Object.assign(newCategory, createCategoryDTO);
 
-        const category = await this.categoryRepository.save(newCatgory);
+        const category = await this.categoryRepository.save(newCategory);
 
-        console.info("category created successfuly: ", category.categoryId)
+        console.info("category created successfully: ", category.id)
 
         return category;
     }
 
     async updateCategory(id: number, updateCategoryDTO: UpdateCategoryDTO): Promise<CategoryEntity>{
-        const categoryBySlug = await this.categoryRepository.findOne({where: {categoryId : id}})
+        const categoryBySlug = await this.categoryRepository.findOne({where: {id : id}})
 
         if(!categoryBySlug){
-            throw new HttpException('catgory not found', HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new HttpException('category not found', HttpStatus.UNPROCESSABLE_ENTITY);
         }   
 
         Object.assign(categoryBySlug, updateCategoryDTO);
 
         const category = await this.categoryRepository.save(categoryBySlug);
 
-        console.info("category updated successfuly: ", category.categoryId)
+        console.info("category updated successfully: ", category.id)
         
         return category
     }
 
     async getOneCategory(id: number):Promise<CategoryEntity>{
-        return await this.categoryRepository.findOne({where: {categoryId: id}})
+        return await this.categoryRepository.findOne({where: {id: id}})
+    }
+
+    async updateCategoryPhoto(id: number, updatePhotoDto: UpdateBrandPhotoDto):Promise<CategoryEntity>{
+        const categoryById = await this.categoryRepository.findOne({where: {id : id}})
+
+        if(!categoryById){
+            throw new HttpException('category not found', HttpStatus.UNPROCESSABLE_ENTITY);
+        }   
+
+        Object.assign(categoryById, updatePhotoDto);
+
+        const category = await this.categoryRepository.save(categoryById);
+
+        console.info("category updated successfully: ", category.id)
+        
+        return category
     }
 }

@@ -16,11 +16,4 @@ export class UpdateBrandDTO{
        })
      @IsNotEmpty()
      readonly description?: string;
-
-     @ApiProperty({
-        example: 'string',
-        required: false
-     })
-    @IsNotEmpty()
-    readonly image?: string;
 }

@@ -15,14 +15,7 @@ export class CreateAddressDTO{
         required: true
      })
     @IsNotEmpty()
-    readonly city: number;
-
-    @ApiProperty({
-      example: 'number',
-      required: true
-   })
-    @IsNotEmpty()
-    readonly province: number;
+    readonly cityId: number;
 
     @ApiProperty({
         example: 'string',

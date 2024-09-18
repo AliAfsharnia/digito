@@ -8,7 +8,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, OneT
 @Entity({name: 'users'})
 export class UserEntity{
     @PrimaryGeneratedColumn()
-    userId: number;
+    id: number;
 
     @Column()
     username: string;
@@ -48,12 +48,12 @@ export class UserEntity{
     favorites: ProductEntity[];
 
     @OneToMany(() => ReviewEntity, (review) => review.user)
-    reviews: ReviewEntity;
+    reviews: ReviewEntity[];
 
     @OneToMany(() => AddressEntity, (address) => address.user)
-    addresses: AddressEntity;
+    addresses: AddressEntity[];
 
     @OneToMany(() => OrderEntity, (order) => order.user)
-    orders: OrderEntity
+    orders: OrderEntity[]
 
 }

@@ -42,8 +42,8 @@ export class AddressController {
     })
     @UsePipes(new ValidationPipe)
     @UseGuards(AuthGuard)
-    async updateAddress(@User('userId') currentUser: number, @Param('id') addressId, @Body() updateAddressDTO: UpdateAddressDTO):Promise<AddressEntity>{
-        return await this.addressService.updateAddress(currentUser, +addressId, updateAddressDTO);
+    async updateAddress(@User('id') currentUser: number, @Param('id') id, @Body() updateAddressDTO: UpdateAddressDTO):Promise<AddressEntity>{
+        return await this.addressService.updateAddress(currentUser, +id, updateAddressDTO);
     } 
 
     @ApiBearerAuth()
@@ -54,8 +54,8 @@ export class AddressController {
     })
     @UsePipes(new ValidationPipe)
     @UseGuards(AuthGuard)
-    async deleteAddress(@User('userId') currentUser: number, @Param('id') addressId):Promise<DeleteResult>{
-        return await this.addressService.deleteAddress(currentUser, +addressId);
+    async deleteAddress(@User('id') currentUser: number, @Param('id') id):Promise<DeleteResult>{
+        return await this.addressService.deleteAddress(currentUser, +id);
     } 
 
     @ApiBearerAuth()

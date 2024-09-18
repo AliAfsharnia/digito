@@ -2,7 +2,7 @@ import { Exclude, Expose } from 'class-transformer';
 
 export class UserDto {
     @Expose()
-    userId: number;
+    id: number;
 
     @Expose()
     username: string;
@@ -20,7 +20,7 @@ export class UserDto {
     bio: string;
 
     @Expose()
-    roll: string;
+    role: string;
 
     constructor(partial: Partial<UserDto>) {
         Object.assign(this, partial);

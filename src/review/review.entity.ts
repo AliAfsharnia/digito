@@ -5,14 +5,11 @@ import {  Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 @Entity({name: 'reviews'})
 export class ReviewEntity{
     @PrimaryGeneratedColumn()
-    reviewId: number;
+    id: number;
 
     @Column()
     subject: string;
 
-    @Column('simple-array')
-    images: string[];
-    
     @Column('float')
     rating: number;
 

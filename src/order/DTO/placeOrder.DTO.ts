@@ -7,7 +7,7 @@ export class PlaceOrderDTO{
         example: 'number',
         required: true
     })
-    readonly productProductId: number;
+    readonly productid: number;
        
     @ApiProperty({
         example: 'number',

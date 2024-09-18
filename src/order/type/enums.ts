@@ -1,0 +1,1 @@
+export enum Status{inProgress = 'in Progress', pending = 'pending', complete = 'complete', blocked = 'blocked'}

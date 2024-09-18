@@ -82,7 +82,7 @@ This project is a web application that allows users to order products online and
      ```json
     [
       {
-        "productProductId": "1",
+        "productid": "1",
         "quantity": "1"
       },
     ]

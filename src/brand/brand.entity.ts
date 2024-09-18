@@ -4,7 +4,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn, RelationCount } from
 @Entity({name: 'brands'})
 export class BrandEntity{
     @PrimaryGeneratedColumn()
-    brandId: number;
+    id: number;
 
     @Column()
     name: string;

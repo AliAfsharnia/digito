@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/Guards/auth.guard';
 import { PlaceOrderDTO } from './DTO/placeOrder.DTO';
 import { OrderEntity } from './order.entity';
@@ -8,6 +8,7 @@ import { UserEntity } from 'src/user/user.entity';
 import { OrderService } from './order.service';
 import { OrderProductEntity } from './orderProduct.entity';
 import { AdminAuthGuard } from 'src/auth/Guards/auth.admin.guard';
+import { Status } from './type/enums';
 
 @Controller()
 export class OrderController {
@@ -32,43 +33,28 @@ export class OrderController {
     }
 
     @ApiTags("orders")
-    @Patch('order/close')
+    @Patch('order/status/:id')
     @ApiBearerAuth()
-    @UseGuards(AuthGuard)
-    async closeOrder(@User() user: UserEntity): Promise<OrderEntity>{
-        return await this.orderService.closeOrder(user);
-    }
-
-    @ApiTags("orders")
-    @Get('user/orders')
-    @ApiBearerAuth()
-    @UseGuards(AuthGuard)
-    async myOrders(@User() user: UserEntity): Promise<OrderEntity[]>{
-        return await this.orderService.myOrders(user);
-    }
-
-    @ApiTags("orders")
-    @Patch("order/:id/complete")
-    @ApiBearerAuth()
+    @ApiQuery({ name: 'status', enum: Status })
     @UseGuards(AdminAuthGuard)
-    async completeOrder(@Param('id') orderId: number): Promise<OrderEntity>{
-        return await this.orderService.completeOrder(orderId);
+    async changeOrderStatus(@Query('status') status: string, @Param('id') id: number): Promise<OrderEntity>{
+        return await this.orderService.changeOrderStatus(status, id);
     }
 
     @ApiTags("orders")
     @Get('order/:id')
     @ApiBearerAuth()
     @UseGuards(AuthGuard)
-    async orderedProducts(@User() user: UserEntity, @Param('id') orderId: number): Promise<OrderProductEntity[]>{
-        return await this.orderService.orderedProducts(user, orderId);
+    async orderedProducts(@User() user: UserEntity, @Param('id') id: number): Promise<OrderProductEntity[]>{
+        return await this.orderService.orderedProducts(user, id);
     }
 
     @ApiTags("orders")
     @Get('order/:id/admin')
     @ApiBearerAuth()
     @UseGuards(AdminAuthGuard)
-    async orderedProductsAdmin( @Param('id') orderId: number): Promise<OrderProductEntity[]>{
-        return await this.orderService.orderedProductsAdmin(orderId);
+    async orderedProductsAdmin( @Param('id') id: number): Promise<OrderProductEntity[]>{
+        return await this.orderService.orderedProductsAdmin(id);
     }
 
     @ApiTags("orders")
@@ -80,10 +66,10 @@ export class OrderController {
     }
 
     @ApiTags("orders")
-    @Delete('order/:orderid/:itemid')
+    @Delete('order/:id/:itemid')
     @ApiBearerAuth()
     @UseGuards(AuthGuard)
-    async removeFromOrder(@User() user: UserEntity, @Param('orderid') orderId: number, @Param('itemid') itemId: number): Promise<OrderEntity>{
-        return await this.orderService.removeFromOrder(user, orderId, itemId); 
+    async removeFromOrder(@User() user: UserEntity, @Param('id') id: number, @Param('itemid') itemId: number): Promise<OrderEntity>{
+        return await this.orderService.removeFromOrder(user, id, itemId); 
     }
 }

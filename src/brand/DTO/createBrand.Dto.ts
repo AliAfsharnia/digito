@@ -14,13 +14,13 @@ export class CreateBrandDTO{
           example: 'string',
           required: false
        })
-     @IsNotEmpty()
-     readonly description: string;
+     readonly description?: string;
 
      @ApiProperty({
         example: 'string',
         required: false
      })
-    @IsNotEmpty()
-    readonly image: string;
+     
+     @ApiProperty({ type: 'string', format: 'binary', description: 'Profile picture of the user' , required: false})
+     public image?: string;
 }

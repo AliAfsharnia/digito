@@ -27,11 +27,4 @@ export class CreateReviewDTO{
        })
      @IsNotEmpty()
      readonly context: string;
-
-     @ApiProperty({
-          example: 'string, string',
-          required: false
-      })
-      readonly images?: string[];
-
 }

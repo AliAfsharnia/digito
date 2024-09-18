@@ -16,16 +16,10 @@ export class AddressService {
     @InjectRepository(CityEntity) private readonly cityRepository: Repository<CityEntity>){}
     
     async createAddress(currentUser: UserEntity, createAddressDTO: CreateAddressDTO): Promise<AddressEntity>{
-        const city = await this.cityRepository.findOne({where:{id: createAddressDTO.city}})
+        const city = await this.cityRepository.findOne({where:{id: createAddressDTO.cityId}})
 
         if(!city){
             throw new HttpException("this city doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
-        }
-
-        const province = await this.provinceRepository.findOne({where:{id: createAddressDTO.province}})
-
-        if(!province){
-            throw new HttpException("this province doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         const newAddress = this.addressRepository.create();
@@ -36,20 +30,18 @@ export class AddressService {
 
         newAddress.city = city;
 
-        newAddress.province = province;
-
         const address = await this.addressRepository.save(newAddress)
 
-        console.info("address created successfully: ", address.addressId)
+        console.info("address created successfully: ", address.id)
 
         return address
     }
 
-    async updateAddress(currentUserId: number, addressId: number, updateAddressDTo: UpdateAddressDTO): Promise<AddressEntity>{
+    async updateAddress(currentid: number, id: number, updateAddressDTo: UpdateAddressDTO): Promise<AddressEntity>{
         
-        const address = await this.addressRepository.findOne({where: {addressId : addressId}})
+        const address = await this.addressRepository.findOne({where: {id : id}})
 
-        if(address.user.userId !== currentUserId){
+        if(address.user.id !== currentid){
             throw new HttpException('not authorized', HttpStatus.UNAUTHORIZED)
         }
 
@@ -57,21 +49,21 @@ export class AddressService {
 
         const result = await this.addressRepository.save(address);
 
-        console.info("address updated successfully: ", address.addressId)
+        console.info("address updated successfully: ", address.id)
 
         return result;
     }
 
-    async deleteAddress(currentUserId: number, addressId: number): Promise< DeleteResult >{
-        const address = await this.addressRepository.findOne({where: {addressId : addressId}})
+    async deleteAddress(currentid: number, id: number): Promise< DeleteResult >{
+        const address = await this.addressRepository.findOne({where: {id : id}})
 
-        if(address.user.userId !== currentUserId){
+        if(address.user.id !== currentid){
             throw new HttpException('not authorized', HttpStatus.UNAUTHORIZED)
         }
 
         const result = this.addressRepository.delete(address);
 
-        console.info("address deleted successfully: ", address.addressId)
+        console.info("address deleted successfully: ", address.id)
 
         return result;
     }

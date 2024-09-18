@@ -6,7 +6,7 @@ import { CityEntity } from "./city.entity";
 @Entity({name: 'addresses'})
 export class AddressEntity{
     @PrimaryGeneratedColumn()
-    addressId: number;
+    id: number;
 
     @Column()
     description: string;
@@ -17,12 +17,10 @@ export class AddressEntity{
     @Column()
     tag: string;
 
-    @ManyToOne(()=> UserEntity ,(user) => user.addresses)
+    @ManyToOne(()=> UserEntity ,(user) => user.addresses, {eager: true})
     user: UserEntity;
 
-    @ManyToOne(()=> CityEntity ,(city) => city.addresses)
+    @ManyToOne(()=> CityEntity ,(city) => city.addresses, {eager: true})
     city: CityEntity;
-    
-    @ManyToOne(()=> ProvinceEntity ,(province) => province.addresses)
-    province: ProvinceEntity;
+
 }

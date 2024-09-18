@@ -2,11 +2,13 @@ import { BrandEntity } from "src/brand/brand.entity";
 import { CategoryEntity } from "src/category/category.entity";
 import { ReviewEntity } from "src/review/review.entity";
 import { Column, DataSource, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Repository } from "typeorm";
+import { AttributesEntity } from "./attributes.entity";
+import { ProductPhotoEntity } from "./ProductPhotos.entity";
 
 @Entity({name: 'products'})
 export class ProductEntity{ 
     @PrimaryGeneratedColumn()
-    productId: number;
+    id: number;
 
     @Column()
     title: string;
@@ -26,8 +28,8 @@ export class ProductEntity{
     @Column({default: ''})
     description: string;
 
-    @Column('simple-array')
-    images: string[];
+    @OneToMany(() => ProductPhotoEntity, (image) => image.product)
+    images: ProductPhotoEntity[];
 
     @Column('simple-array')
     colors: string[];
@@ -40,6 +42,9 @@ z
 
     @OneToMany(() => ReviewEntity, (review) => review.product)
     reviews: ReviewEntity;
+
+    @OneToMany(() => AttributesEntity, (attribute) => attribute.product)
+    attributes: AttributesEntity[];
 }
 
 

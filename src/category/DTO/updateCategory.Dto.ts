@@ -14,13 +14,5 @@ export class UpdateCategoryDTO{
           example: 'string',
           required: false
        })
-     @IsNotEmpty()
      readonly description?: string;
-
-     @ApiProperty({
-        example: 'string',
-        required: false
-     })
-    @IsNotEmpty()
-    readonly image?: string;
 }

@@ -16,6 +16,6 @@ export class CityEntity{
     @OneToMany(() => AddressEntity, (address) => address.user)
     addresses: AddressEntity;
 
-    @ManyToOne(()=> ProvinceEntity ,(province) => province.city )
+    @ManyToOne(()=> ProvinceEntity ,(province) => province.city, {eager: true})
     province: ProvinceEntity;
 }

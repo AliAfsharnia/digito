@@ -1,14 +1,14 @@
 import { UserEntity } from "src/user/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, OneToMany, BeforeUpdate } from "typeorm";
 import { OrderProductEntity } from "./orderProduct.entity";
+import { Status } from "./type/enums";
 
 @Entity({ name: 'orders' })
 export class OrderEntity {
     @PrimaryGeneratedColumn()
-    orderId: number;
+    id: number;
 
     @ManyToOne(() => UserEntity, (user) => user.orders, {eager : true})
-    @JoinColumn({ name: 'userId' })
     user: UserEntity;
 
     @OneToMany(() => OrderProductEntity,(order) => order.order,)
@@ -23,9 +23,12 @@ export class OrderEntity {
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     updatedAt: Date;
 
-    @Column({ type: 'varchar', length: 255, default: 'pending' })
+    @Column({ type: 'varchar', length: 255, default: Status.pending })
     status: string;
 
+    @Column({ default: 0})
+    quantity: number;
+    
     @BeforeUpdate()
     updateTimestamp(){
         this.updatedAt = new Date();

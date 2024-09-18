@@ -20,9 +20,9 @@ export class AuthService {
     private readonly mailService: MailerService) {}
 
     async createJwtToken(user: UserEntity): Promise<string>{
-        const payload = { sub: user.userId, username: user.username };
+        const payload = { sub: user.id, username: user.username };
         const token =  await this.jwtService.signAsync(payload)
-        console.info("token created successfully for user: ", user.userId)
+        console.info("token created successfully for user: ", user.id)
         return token;
 
     }
@@ -47,13 +47,13 @@ export class AuthService {
 
         const user = await this.userRepository.save(newUser);
 
-        console.info("User registered successfully: ", user.userId);
+        console.info("User registered successfully: ", user.id);
 
         return user;
     }
 
     async login(loginUserDto: LoginUserDTO): Promise<UserEntity> {
-        const user = await this.userRepository.findOne({where: {email: loginUserDto.email}, select:{userId: true,bio: true, email: true,username: true,image: true, role: true,password: true}});
+        const user = await this.userRepository.findOne({where: {email: loginUserDto.email}, select:{id: true,bio: true, email: true,username: true,image: true, role: true,password: true}});
         if (!user) {
             throw new UnauthorizedException();
         }    
@@ -65,7 +65,7 @@ export class AuthService {
         throw new UnauthorizedException();
         }
         
-        console.info("User logged in successfully:", user.userId)
+        console.info("User logged in successfully:", user.id)
         return  user
     }
 
@@ -93,12 +93,12 @@ export class AuthService {
             text: message,
             });
 
-        console.info("Forgot password email send successfully for user:", user.userId);
+        console.info("Forgot password email send successfully for user:", user.id);
     }
 
     async resetPassword(token: string, resetPasswordDTO: ResetPasswordDTO): Promise<UserDto>{
         const decode = verify(token ,jwtConstants.secret);
-        const user = await this.userRepository.findOne({where:{userId: +decode.sub}})
+        const user = await this.userRepository.findOne({where:{id: +decode.sub}})
 
         if(!user){
             throw new HttpException("user not found or token is expired!", HttpStatus.FORBIDDEN)
@@ -110,7 +110,7 @@ export class AuthService {
 
         const userDto = plainToInstance(UserDto, newUser, { excludeExtraneousValues: true });
 
-        console.info("password changed successfully for user:", user.userId);
+        console.info("password changed successfully for user:", user.id);
 
         return userDto;
     }

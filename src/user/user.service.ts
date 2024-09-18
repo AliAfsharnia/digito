@@ -33,7 +33,7 @@ export class UserService {
         const user = await this.userRepository.save(newUser);
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
 
-        console.info("User registered successfully: ", userDto.userId);
+        console.info("User registered successfully: ", userDto.id);
 
         return userDto;
     }
@@ -46,7 +46,7 @@ export class UserService {
     }
 
     async findById(id: number):Promise<UserDto>{
-        const user = await this.userRepository.findOne({where:{ userId : id}})
+        const user = await this.userRepository.findOne({where:{ id : id}})
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
         if (userDto && userDto.image) {
             const imageUrl = `data:image/jpeg;base64,${userDto.image}`;
@@ -56,8 +56,8 @@ export class UserService {
         return userDto;
     }
 
-    async updateUser(currentUserId :number, updateUserDto:UpdateUserDto):Promise<UserDto>{
-        const currentUser = await this.userRepository.findOne({where:{userId : currentUserId}})
+    async updateUser(currentid :number, updateUserDto:UpdateUserDto):Promise<UserDto>{
+        const currentUser = await this.userRepository.findOne({where:{id : currentid}})
 
         const userByEmail = await this.userRepository.findOne({
             where:{email :updateUserDto.email}
@@ -77,20 +77,20 @@ export class UserService {
         const user = await this.userRepository.save(currentUser)
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
 
-        console.info("User updated successfully: ", userDto.userId);
+        console.info("User updated successfully: ", userDto.id);
 
         return userDto;
     }
 
-    async updateUserPhoto(currentUserId :number, updateUserPhotoDto:UpdateUserPhotoDto):Promise<UserDto>{
-        const currentUser = await this.userRepository.findOne({where:{userId : currentUserId}})    
+    async updateUserPhoto(currentid :number, updateUserPhotoDto:UpdateUserPhotoDto):Promise<UserDto>{
+        const currentUser = await this.userRepository.findOne({where:{id : currentid}})    
 
         Object.assign(currentUser, updateUserPhotoDto);
 
         const user = await this.userRepository.save(currentUser)
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
 
-        console.info("User profile photo updated successfully: ", userDto.userId);
+        console.info("User profile photo updated successfully: ", userDto.id);
 
         return userDto;
     }

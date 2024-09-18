@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import slugify from 'slugify';
 import { CreateBrandDTO } from './DTO/createBrand.Dto';
 import { UpdateBrandDTO } from './DTO/updateBrand.Dto';
+import { UpdateBrandPhotoDto } from './DTO/updateBrandPhoto.Dto';
 
 @Injectable()
 export class BrandService {
@@ -19,7 +20,7 @@ export class BrandService {
     }
 
     async getOneBrand(id: number): Promise<BrandEntity> {
-        return this.brandRepository.findOne({where: {brandId: id } } );
+        return this.brandRepository.findOne({where: {id: id } } );
     }
 
     async createBrand(creatBrandDTO: CreateBrandDTO):Promise<BrandEntity>{
@@ -35,13 +36,13 @@ export class BrandService {
 
         const brand = await this.brandRepository.save(newBrand);
 
-        console.info("brand created successfuly: ", brand.brandId)
+        console.info("brand created successfuly: ", brand.id)
 
         return brand;
     }
 
     async updateBrand(id: number, updateBrandDTO: UpdateBrandDTO): Promise<BrandEntity>{
-        const brandBySlug = await this.brandRepository.findOne({where: {brandId : id}})
+        const brandBySlug = await this.brandRepository.findOne({where: {id : id}})
 
         if(!brandBySlug){
             throw new HttpException('Brand not found', HttpStatus.UNPROCESSABLE_ENTITY);
@@ -52,7 +53,23 @@ export class BrandService {
 
         const brand = await this.brandRepository.save(brandBySlug);
 
-        console.info("brand updated successfuly: ", brand.brandId)
+        console.info("brand updated successfuly: ", brand.id)
+        
+        return brand
+    }
+
+    async updateBrandPhoto(id: number, updatePhotoDto: UpdateBrandPhotoDto):Promise<BrandEntity>{
+        const brandById = await this.brandRepository.findOne({where: {id : id}})
+
+        if(!brandById){
+            throw new HttpException('brand not found', HttpStatus.UNPROCESSABLE_ENTITY);
+        }   
+
+        Object.assign(brandById, updatePhotoDto);
+
+        const brand = await this.brandRepository.save(brandById);
+
+        console.info("brand updated successfully: ", brand.id)
         
         return brand
     }

@@ -21,8 +21,8 @@ export class UserController {
     @ApiBearerAuth()
     @Get()
     @UseGuards(AuthGuard)
-    async getCurrentUser(@User() currentUserId):Promise<UserDto>{
-        return this.userService.findById(currentUserId.userId)
+    async getCurrentUser(@User() currentid):Promise<UserDto>{
+        return this.userService.findById(currentid.id)
     }
 
     @ApiBearerAuth()
@@ -34,7 +34,7 @@ export class UserController {
     @UseGuards(AuthGuard)
     @UsePipes(new ValidationPipe)
     async updateUser(@User() currentUser, @Body() updateUserPhotoDto: UpdateUserPhotoDto):Promise<UserDto>{
-        return this.userService.updateUserPhoto(currentUser.userId ,updateUserPhotoDto)
+        return this.userService.updateUserPhoto(currentUser.id ,updateUserPhotoDto)
     }
 
     @ApiBearerAuth()
@@ -64,14 +64,14 @@ export class UserController {
         if (profilePicture) {
             updateUserPhotoDto.image = profilePicture.map(file => file.location)[0];
         }
-        return this.userService.updateUserPhoto(currentUser.userId ,updateUserPhotoDto)
+        return this.userService.updateUserPhoto(currentUser.id ,updateUserPhotoDto)
     }
 
     @ApiBearerAuth()
     @Get('isAdmin')
     @UseGuards(AdminAuthGuard)
     async isAdmin(@User() currentUser):Promise<UserDto>{
-        return await this.userService.findById(currentUser.userId)
+        return await this.userService.findById(currentUser.id)
     }
 }
 

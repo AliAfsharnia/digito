@@ -18,7 +18,4 @@ export class ProvinceEntity{
 
     @OneToMany(() => CityEntity, (city) => city.province)
     city: CityEntity;
-
-    @OneToMany(() => AddressEntity, (address) => address.province)
-    addresses: AddressEntity;
 }

@@ -15,12 +15,13 @@ import { MailerModule } from '@nestjs-modules/mailer';
       auth: {
         user: process.env.EMAIL_USERNAME,
         pass: process.env.EMAIL_PASSWORD,
+
       },
     },
   }), TypeOrmModule.forFeature([UserEntity]),JwtModule.register({
     global: true,
     secret: jwtConstants.secret,
-    signOptions: { expiresIn: '1h' },
+    signOptions: { expiresIn: '1d' },
   }),],
   providers: [AuthService],
   controllers: [AuthController],
