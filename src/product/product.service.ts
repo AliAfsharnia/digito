@@ -100,7 +100,7 @@ export class ProductService {
 
     async likingProduct(UserId: number, id: number):Promise<ProductEntity>{
         const product = await this.getProductById(id);
-        const user = await this.userRepository.findOne({where: {id: UserId}, relations: ['favorites', 'images']});
+        const user = await this.userRepository.findOne({where: {id: UserId}, relations: ['favorites']});
     
         const isNotFavorite = user.favorites.findIndex((productsInFavorites) => productsInFavorites.id === product.id) === -1;
     
@@ -120,7 +120,7 @@ export class ProductService {
     
     async disLikingProduct(UserId: number, id: number):Promise<ProductEntity>{
         const product = await this.getProductById(id);
-        const user = await this.userRepository.findOne({where: {id: UserId}, relations: ['favorites', 'images']});
+        const user = await this.userRepository.findOne({where: {id: UserId}, relations: ['favorites']});
     
         const productIndex = user.favorites.findIndex((productsInFavorites) => productsInFavorites.id === product.id);
     
@@ -186,12 +186,12 @@ export class ProductService {
     async userFav(currentid: number):Promise<ProductEntity[]>{
         const rawResult = await this.dataSource
         .createQueryBuilder()
-        .select('"productsid"')
+        .select('"productsId"')
         .from('users_favorites_products', 'users_favorites_products')
-        .where('users_favorites_products."usersid" = :id', { id: Number(currentid) }).getRawMany()
+        .where('users_favorites_products."usersId" = :id', { id: Number(currentid) }).getRawMany()
         ;
 
-        const ids = rawResult.map(item => item.productsid);
+        const ids = rawResult.map(item => item.productsId);
 
         const products = await this.productRepository.find({where:{id: In(ids)}})
 
