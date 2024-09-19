@@ -119,10 +119,6 @@ export class OrderService {
             throw new HttpException(Massages.ORDER_NOT_FOUND,HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
-        if(order.status == 'in progress' || order.status == 'complete'){
-            throw new HttpException(Massages.ORDER_NOT_PENDING,HttpStatus.UNPROCESSABLE_ENTITY)
-        }
-
         const orderProduct = await this.orderProductRepository.findOne({ where: {id: orderId}});
 
         if(!orderProduct){
@@ -140,6 +136,7 @@ export class OrderService {
         await this.ProductRepository.save(orderedProduct);
 
         order.totalPrice = Number(order.totalPrice) - ( Number(orderedProduct.price) * Number(orderProduct.quantity))
+        order.quantity = Number(order.quantity) - Number(orderProduct.quantity)
 
         await this.orderProductRepository.delete(orderProduct);
 
