@@ -4,6 +4,7 @@ import { NextFunction  ,Response} from "express";
 import { ExpressRequest } from "src/type/expressRequest.interface";
 import { jwtConstants } from "../constants";
 import { UserService } from "src/user/user.service"; 
+import { Massages } from "src/massages/massages";
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware{
@@ -22,7 +23,7 @@ export class AuthMiddleware implements NestMiddleware{
             req.user = user;
             next()
         }catch(err){
-            console.error("Token not verified!", err)
+            console.error(Massages.TOKEN_NOT_VERIFIED, err)
             req.user = null;
             next()
         }

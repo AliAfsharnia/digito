@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateReviewDTO } from './DTO/createReview.Dto';
 import { ProductEntity } from 'src/product/product.entity';
 import { UserEntity } from 'src/user/user.entity';
+import { Massages } from 'src/massages/massages';
 
 @Injectable()
 export class ReviewService {
@@ -15,7 +16,7 @@ export class ReviewService {
         const product = await this.productRepository.findOne({where: {id: id}})
 
         if(!product){
-            throw new HttpException("this product doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.PRODUCT_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         const newReview = await this.reviewRepository.create();
@@ -28,7 +29,7 @@ export class ReviewService {
 
         const result = await this.reviewRepository.save(newReview);
 
-        console.info("Review created successfully: ", result.id);
+        console.info(Massages.REVIEW_CREATED, result.id);
 
         return result;
     }
@@ -36,7 +37,7 @@ export class ReviewService {
     async getProductReviews(id: number): Promise<ReviewEntity[]>{
         const product = await this.productRepository.findOne({where: {id: id}})
         const reviews = await this.reviewRepository.createQueryBuilder('reviews')
-        .where('reviews."productid" = :id', { id: product.id })
+        .where('reviews."productId" = :id', { id: product.id })
         .getMany();
 
         return  reviews;
@@ -49,7 +50,7 @@ export class ReviewService {
 
         const result = await this.reviewRepository.save(review);
 
-        console.info("Review approved successfully: ", result.id)
+        console.info(Massages.REVIEW_APPROVED, result.id)
 
         return result;
     }

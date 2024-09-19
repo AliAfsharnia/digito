@@ -8,6 +8,7 @@ import { UpdateAddressDTO } from './DTO/updateAddress.dto';
 import { UserDto } from 'src/user/DTO/user.Dto';
 import { ProvinceEntity } from './province.entity';
 import { CityEntity } from './city.entity';
+import { Massages } from 'src/massages/massages';
 
 @Injectable()
 export class AddressService {
@@ -19,7 +20,7 @@ export class AddressService {
         const city = await this.cityRepository.findOne({where:{id: createAddressDTO.cityId}})
 
         if(!city){
-            throw new HttpException("this city doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.CITY_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         const newAddress = this.addressRepository.create();
@@ -32,7 +33,7 @@ export class AddressService {
 
         const address = await this.addressRepository.save(newAddress)
 
-        console.info("address created successfully: ", address.id)
+        console.info(Massages.ADDRESS_CREATED, address.id)
 
         return address
     }
@@ -42,14 +43,14 @@ export class AddressService {
         const address = await this.addressRepository.findOne({where: {id : id}})
 
         if(address.user.id !== currentid){
-            throw new HttpException('not authorized', HttpStatus.UNAUTHORIZED)
+            throw new HttpException(Massages.NOT_AUTHORIZED, HttpStatus.UNAUTHORIZED)
         }
 
         Object.assign(address, updateAddressDTo);
 
         const result = await this.addressRepository.save(address);
 
-        console.info("address updated successfully: ", address.id)
+        console.info(Massages.ADDRESS_UPDATED, address.id)
 
         return result;
     }
@@ -58,12 +59,12 @@ export class AddressService {
         const address = await this.addressRepository.findOne({where: {id : id}})
 
         if(address.user.id !== currentid){
-            throw new HttpException('not authorized', HttpStatus.UNAUTHORIZED)
+            throw new HttpException(Massages.NOT_AUTHORIZED, HttpStatus.UNAUTHORIZED)
         }
 
         const result = this.addressRepository.delete(address);
 
-        console.info("address deleted successfully: ", address.id)
+        console.info(Massages.ADDRESS_DELETED, address.id)
 
         return result;
     }

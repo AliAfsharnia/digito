@@ -13,6 +13,7 @@ import { ResetPasswordDTO } from './DTO/resetPassword.dto';
 import { UserDto } from 'src/user/DTO/user.Dto';
 import { plainToInstance } from 'class-transformer';
 import { CreateUserDTO } from 'src/user/DTO/createUser.Dto';
+import { Massages } from 'src/massages/massages';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +23,7 @@ export class AuthService {
     async createJwtToken(user: UserEntity): Promise<string>{
         const payload = { sub: user.id, username: user.username };
         const token =  await this.jwtService.signAsync(payload)
-        console.info("token created successfully for user: ", user.id)
+        console.info(Massages.TOKEN_CREATED, user.id)
         return token;
 
     }
@@ -38,7 +39,7 @@ export class AuthService {
         })
     
         if( userByEmail || userByUsername){
-            throw new HttpException('email or username are taken', HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new HttpException(Massages.EMAIL_OR_USER_TAKEN, HttpStatus.UNPROCESSABLE_ENTITY);
         }
     
         const newUser = new UserEntity();
@@ -47,7 +48,7 @@ export class AuthService {
 
         const user = await this.userRepository.save(newUser);
 
-        console.info("User registered successfully: ", user.id);
+        console.info(Massages.USER_REGISTER, user.id);
 
         return user;
     }
@@ -65,7 +66,7 @@ export class AuthService {
         throw new UnauthorizedException();
         }
         
-        console.info("User logged in successfully:", user.id)
+        console.info(Massages.USER_LOGGING, user.id)
         return  user
     }
 
@@ -81,7 +82,7 @@ export class AuthService {
         const user = await this.userRepository.findOne({where: {email: email}})
 
         if(!user){
-            throw new HttpException("user not found!", HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.USER_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
         }
         const token = await this.createJwtToken(user);
         const message = `Forgot your password? If you didn't forget your password, please ignore this email! link = ${process.env.BASE_URL}/resetPassword/${token}`;
@@ -93,7 +94,7 @@ export class AuthService {
             text: message,
             });
 
-        console.info("Forgot password email send successfully for user:", user.id);
+        console.info(Massages.FORGOT_EMAIL_SENT, user.id);
     }
 
     async resetPassword(token: string, resetPasswordDTO: ResetPasswordDTO): Promise<UserDto>{
@@ -101,7 +102,7 @@ export class AuthService {
         const user = await this.userRepository.findOne({where:{id: +decode.sub}})
 
         if(!user){
-            throw new HttpException("user not found or token is expired!", HttpStatus.FORBIDDEN)
+            throw new HttpException(Massages.TOKEN_NOT_VALID, HttpStatus.FORBIDDEN)
         }
 
         Object.assign(user, resetPasswordDTO);
@@ -110,7 +111,7 @@ export class AuthService {
 
         const userDto = plainToInstance(UserDto, newUser, { excludeExtraneousValues: true });
 
-        console.info("password changed successfully for user:", user.id);
+        console.info(Massages.PASSWORD_CHANGE, user.id);
 
         return userDto;
     }

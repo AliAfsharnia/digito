@@ -1,4 +1,5 @@
 import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { Massages } from "src/massages/massages";
 import { ExpressRequest } from "src/type/expressRequest.interface";
 
 
@@ -9,6 +10,6 @@ export class AuthGuard implements CanActivate{
         if(request.user){
             return true;
         }
-        throw new HttpException('not authorized', HttpStatus.UNAUTHORIZED)
+        throw new HttpException(Massages.NOT_AUTHORIZED, HttpStatus.UNAUTHORIZED)
     }
 } 

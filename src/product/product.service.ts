@@ -11,6 +11,7 @@ import { CreateAttributeDto } from './DTO/createAttribute.Dto';
 import { AttributesEntity } from './attributes.entity';
 import { UpdateAttributeDTO } from './DTO/updateAttribute.Dto';
 import { ProductPhotoEntity } from './ProductPhotos.entity';
+import { Massages } from 'src/massages/massages';
 
 @Injectable()
 export class ProductService {
@@ -26,13 +27,13 @@ export class ProductService {
         const brand = await this.brandRepository.findOne({where:{id: createProductDTO.brandId}})
 
         if(!brand){
-            throw new HttpException("this brand doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.BRAND_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         const category = await this.categoryRepository.findOne({where:{id: createProductDTO.categoryId}})
 
         if(!category){
-            throw new HttpException("this category doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.CATEGORY_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         const newProduct = this.productRepository.create()
@@ -47,7 +48,7 @@ export class ProductService {
 
         const result = await this.productRepository.save(newProduct);
 
-        console.info("Product created successfully: ", result.id)
+        console.info(Massages.PRODUCT_CREATED, result.id)
 
         return result;
     }
@@ -57,18 +58,18 @@ export class ProductService {
         photo.product = product
         photo.image = image;
         const result = await this.productPhotoRepository.save(photo);
-        console.info("Photo uploaded successfully: ", result.id)
+        console.info(Massages.PRODUCT_PHOTO_UPDATED, result.id)
     }
 
     async deletePhotoFromProduct(id: number):Promise<DeleteResult>{
         const image = await this.productPhotoRepository.findOne({where:{id: id}})
 
         if(!image){
-            throw new HttpException("this image doesn't exist!", HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.PRODUCT_PHOTO_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         const result = await this.productPhotoRepository.delete(image);
-        console.info("Photo deleted successfully: ", id)
+        console.info(Massages.PRODUCT_PHOTO_DELETED, id)
 
         return result;
     }
@@ -92,7 +93,7 @@ export class ProductService {
 
         const result = await this.productRepository.save(product);
 
-        console.info("Product updated successfully: ", result.id)
+        console.info(Massages.PRODUCT_UPDATED, result.id)
 
         return result;
     }
@@ -111,8 +112,8 @@ export class ProductService {
             await this.userRepository.save(user)
         }    
         
-        console.info("Product added to favorite successfully for user: ", user.id)
-        console.info("Product favorites increased successfully for product: ", product.id)
+        console.info(Massages.PRODUCT_ADDED_TO_FAVORITES, user.id)
+        console.info(Massages.PRODUCT_FAVORITES_INCREASED, product.id)
 
         return product;
     }
@@ -131,8 +132,8 @@ export class ProductService {
             await this.userRepository.save(user)
         }   
     
-        console.info("Product removed from favorite successfully for user: ", user.id)
-        console.info("Product favorites decreased successfully for product: ", product.id)
+        console.info(Massages.PRODUCT_REMOVED_FROM_FAVORITES, user.id)
+        console.info(Massages.PRODUCT_FAVORITES_DECREASED, product.id)
 
         return product;
     }
@@ -144,13 +145,13 @@ export class ProductService {
             const brand = await this.brandRepository.findOne({where:{id: query.brand}})
 
             if(!brand){
-                throw new HttpException("this brand doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
+                throw new HttpException(Massages.BRAND_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
             }
 
             const category = await this.categoryRepository.findOne({where: {id: query.category}})
 
             if(!category){
-                throw new HttpException("this category doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
+                throw new HttpException(Massages.CATEGORY_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
             }
 
             return this.productRepository.find({where: {category: category, brand: brand}, relations: ['attributes', 'images']})
@@ -161,7 +162,7 @@ export class ProductService {
             const brand = await this.brandRepository.findOne({where:{id: query.brand}})
 
             if(!brand){
-                throw new HttpException("this brand doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
+                throw new HttpException(Massages.BRAND_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
             }
 
 
@@ -173,7 +174,7 @@ export class ProductService {
             const category = await this.categoryRepository.findOne({where: {id: query.category}})
 
             if(!category){
-                throw new HttpException("this category doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
+                throw new HttpException(Massages.CATEGORY_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
             }
 
             return this.productRepository.find({where: {category: category}, relations: ['attributes', 'images']})
@@ -201,7 +202,7 @@ export class ProductService {
         const product = await this.productRepository.findOne({where:{id: id}, relations: ['attributes', 'images']})
 
         if(!product){
-            throw new HttpException("this product doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.PRODUCT_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         const newAttr = this.attributesRepository.create();
@@ -210,7 +211,7 @@ export class ProductService {
 
         const result = await this.attributesRepository.save(newAttr);
 
-        console.info("Attribute created successfully for product: ", product.id)
+        console.info(Massages.ATTRIBUTE_CREATED, product.id)
 
         return result;
     }
@@ -219,14 +220,14 @@ export class ProductService {
         const attr = await this.attributesRepository.findOne({where:{id: id}})
 
         if(!attr){
-            throw new HttpException("this attribute doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.ATTRIBUTE_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         Object.assign(attr, updateAttributesDto)
 
         const result = await this.attributesRepository.save(attr);
 
-        console.info("Attribute updated successfully for attribute: ", attr.id)
+        console.info(Massages.ATTRIBUTE_UPDATED, attr.id)
 
         return result;
     }
@@ -235,12 +236,12 @@ export class ProductService {
         const attr = await this.attributesRepository.findOne({where:{id: id}})
 
         if(!attr){
-            throw new HttpException("this attribute doesn't exist", HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.ATTRIBUTE_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         const result = await this.attributesRepository.delete(attr);
 
-        console.info("Attribute deleted successfully attribute: ", attr.id)
+        console.info(Massages.ATTRIBUTE_DELETED, attr.id)
 
         return result;
     }

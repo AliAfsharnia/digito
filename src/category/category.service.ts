@@ -6,6 +6,7 @@ import { CreateCategoryDTO } from './DTO/createCategory.Dto';
 import { UpdateCategoryDTO } from './DTO/updateCategory.Dto';
 import slugify from 'slugify';
 import { UpdateBrandPhotoDto } from 'src/brand/DTO/updateBrandPhoto.Dto';
+import { Massages } from 'src/massages/massages';
 
 @Injectable()
 export class CategoryService {
@@ -23,7 +24,7 @@ export class CategoryService {
         const categoryByName = await this.categoryRepository.findOne({where: {name : createCategoryDTO.name} } )
 
         if(categoryByName){
-            throw new HttpException('name is taken', HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new HttpException(Massages.NAME_TAKEN, HttpStatus.UNPROCESSABLE_ENTITY);
         }
         
         const newCategory= new CategoryEntity();
@@ -32,7 +33,7 @@ export class CategoryService {
 
         const category = await this.categoryRepository.save(newCategory);
 
-        console.info("category created successfully: ", category.id)
+        console.info(Massages.CATEGORY_CREATED, category.id)
 
         return category;
     }
@@ -41,14 +42,14 @@ export class CategoryService {
         const categoryBySlug = await this.categoryRepository.findOne({where: {id : id}})
 
         if(!categoryBySlug){
-            throw new HttpException('category not found', HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new HttpException(Massages.CATEGORY_NOT_FOUND, HttpStatus.UNPROCESSABLE_ENTITY);
         }   
 
         Object.assign(categoryBySlug, updateCategoryDTO);
 
         const category = await this.categoryRepository.save(categoryBySlug);
 
-        console.info("category updated successfully: ", category.id)
+        console.info(Massages.CATEGORY_UPDATED, category.id)
         
         return category
     }
@@ -61,14 +62,14 @@ export class CategoryService {
         const categoryById = await this.categoryRepository.findOne({where: {id : id}})
 
         if(!categoryById){
-            throw new HttpException('category not found', HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new HttpException(Massages.CATEGORY_UPDATED, HttpStatus.UNPROCESSABLE_ENTITY);
         }   
 
         Object.assign(categoryById, updatePhotoDto);
 
         const category = await this.categoryRepository.save(categoryById);
 
-        console.info("category updated successfully: ", category.id)
+        console.info(Massages.CATEGORY_UPDATED, category.id)
         
         return category
     }

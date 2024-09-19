@@ -7,6 +7,7 @@ import { UpdateUserDto } from './DTO/updateUser.Dto';
 import { UserDto } from './DTO/user.Dto';
 import { plainToInstance } from 'class-transformer';
 import { UpdateUserPhotoDto } from './DTO/updateUserPhoto.Dto';
+import { Massages } from 'src/massages/massages';
 
 @Injectable()
 export class UserService {
@@ -23,7 +24,7 @@ export class UserService {
         })
     
         if( userByEmail || userByUsername){
-            throw new HttpException('email or username are taken', HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new HttpException(Massages.EMAIL_OR_USER_TAKEN, HttpStatus.UNPROCESSABLE_ENTITY);
         }
     
         const newUser = new UserEntity();
@@ -33,7 +34,7 @@ export class UserService {
         const user = await this.userRepository.save(newUser);
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
 
-        console.info("User registered successfully: ", userDto.id);
+        console.info(Massages.USER_REGISTER, userDto.id);
 
         return userDto;
     }
@@ -68,7 +69,7 @@ export class UserService {
         })
     
         if( userByEmail || userByUsername){
-            throw new HttpException('email or username are taken', HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new HttpException(Massages.EMAIL_OR_USER_TAKEN, HttpStatus.UNPROCESSABLE_ENTITY);
         }
     
 
@@ -77,7 +78,7 @@ export class UserService {
         const user = await this.userRepository.save(currentUser)
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
 
-        console.info("User updated successfully: ", userDto.id);
+        console.info(Massages.USER_UPDATED, userDto.id);
 
         return userDto;
     }
@@ -90,7 +91,7 @@ export class UserService {
         const user = await this.userRepository.save(currentUser)
         const userDto = plainToInstance(UserDto, user, { excludeExtraneousValues: true });
 
-        console.info("User profile photo updated successfully: ", userDto.id);
+        console.info(Massages.USER_UPDATED, userDto.id);
 
         return userDto;
     }

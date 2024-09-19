@@ -7,6 +7,7 @@ import { OrderProductEntity } from './orderProduct.entity';
 import { Repository } from 'typeorm';
 import { ProductEntity } from 'src/product/product.entity';
 import { Status } from './type/enums';
+import { Massages } from 'src/massages/massages';
 
 @Injectable()
 export class OrderService {
@@ -28,16 +29,16 @@ export class OrderService {
             
             pendingOrder = await this.orderRepository.save(pendingOrder);
 
-            console.info("Order created successfully: ", pendingOrder.id);
+            console.info(Massages.ORDER_CREATE, pendingOrder.id);
         } 
              const product = await this.ProductRepository.findOne({where: {id: placeOrderDto.productid}})
 
              if(!product){
-                throw new HttpException("this product doesn't exist!",HttpStatus.UNPROCESSABLE_ENTITY)
+                throw new HttpException(Massages.PRODUCT_NOT_FOUND,HttpStatus.UNPROCESSABLE_ENTITY)
              }
 
              if(product.stockCount < placeOrderDto.quantity){
-                throw new HttpException('this product quantity is less then request!',HttpStatus.UNPROCESSABLE_ENTITY)
+                throw new HttpException(Massages.PRODUCT_OUT_OF_STUCK,HttpStatus.UNPROCESSABLE_ENTITY)
              }
              
              product.stockCount = (product.stockCount - placeOrderDto.quantity);
@@ -51,26 +52,9 @@ export class OrderService {
              newOrder.totalPrice = Number(product.price) * Number(placeOrderDto.quantity)
              newOrder = await this.orderProductRepository.save(newOrder);
              
-            console.info("item added to order successfully: ",newOrder.id )
+            console.info(Massages.ITEM_ADDED,newOrder.id )
 
              return newOrder
-    }
-
-    async createNewOrder(user:UserEntity):Promise<OrderEntity>{
-        
-    
-        
-            let pendingOrder = this.orderRepository.create(); 
-            pendingOrder.user = user;
-            pendingOrder.status = Status.pending;
-            pendingOrder.totalPrice = 0;
-            pendingOrder.quantity = 0;
-            
-            pendingOrder = await this.orderRepository.save(pendingOrder);
-            console.info("Order created successfully: ", pendingOrder.id);
-        
-
-        return pendingOrder
     }
 
     async myOrders(user: UserEntity): Promise<OrderEntity[]>{
@@ -83,11 +67,11 @@ export class OrderService {
         const order = await this.orderRepository.findOne({where: {id: id}, relations: ['orderProducts', 'user']});
 
         if(!order){
-            throw new HttpException("this order doesn't exist!",HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.ORDER_NOT_FOUND,HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         if(order.user.id != user.id){
-            throw new HttpException('not authorized', HttpStatus.UNAUTHORIZED)
+            throw new HttpException(Massages.NOT_AUTHORIZED, HttpStatus.UNAUTHORIZED)
         }
 
         const items = order.orderProducts;
@@ -99,7 +83,7 @@ export class OrderService {
         const order = await this.orderRepository.findOne({where: {id: id}});
 
         if(!order){
-            throw new HttpException("this order doesn't exist!",HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.ORDER_NOT_FOUND,HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         return await this.orderProductRepository.find({where: {order}})
@@ -109,7 +93,7 @@ export class OrderService {
         const order = await this.orderRepository.findOne({ where: {id: id}})
 
         if(!order){
-            throw new HttpException("this order doesn't exist!",HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.ORDER_NOT_FOUND,HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         order.status = status;
@@ -124,29 +108,29 @@ export class OrderService {
         return await this.orderRepository.find({ relations: [ 'user']})
     }
 
-    async removeFromOrder(user: UserEntity, id: number, orderid: number): Promise<OrderEntity>{
+    async removeFromOrder(user: UserEntity, id: number, orderId: number): Promise<OrderEntity>{
         const order = await this.orderRepository.findOne({where: {id: id}})
 
         if(order.user.id != user.id){
-            throw new HttpException('not authorized', HttpStatus.UNAUTHORIZED)
+            throw new HttpException(Massages.NOT_AUTHORIZED ,HttpStatus.UNAUTHORIZED)
         }
 
         if(!order){
-            throw new HttpException("this order doesn't exist!",HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.ORDER_NOT_FOUND,HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         if(order.status == 'in progress' || order.status == 'complete'){
-            throw new HttpException('order most be on (pending) status for this request!',HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.ORDER_NOT_PENDING,HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
-        const orderProduct = await this.orderProductRepository.findOne({ where: {id: orderid}});
+        const orderProduct = await this.orderProductRepository.findOne({ where: {id: orderId}});
 
         if(!orderProduct){
-            throw new HttpException("this item doesn't exist!",HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.ITEM_NOT_FOUND,HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         if(orderProduct.order.id != order.id){
-            throw new HttpException("this item doesn't exist in this order!",HttpStatus.UNPROCESSABLE_ENTITY)
+            throw new HttpException(Massages.ITEM_NOT_IN_ORDER,HttpStatus.UNPROCESSABLE_ENTITY)
         }
 
         const orderedProduct = orderProduct.product;
@@ -159,7 +143,7 @@ export class OrderService {
 
         await this.orderProductRepository.delete(orderProduct);
 
-        console.info("item deleted from the order successfully: ", order.id)
+        console.info(Massages.ITEM_DELETED, order.id)
 
         return await this.orderRepository.save(order)
     }
