@@ -198,7 +198,7 @@ export class ProductService {
        return products;
     }
 
-    async addAttribute(id: number, createAttributesDto: CreateAttributeDto):Promise<AttributesEntity>{
+    async addAttribute(id: number, createAttributesDto: CreateAttributeDto):Promise<ProductEntity>{
         const product = await this.productRepository.findOne({where:{id: id}, relations: ['attributes', 'images']})
 
         if(!product){
@@ -213,7 +213,7 @@ export class ProductService {
 
         console.info(Massages.ATTRIBUTE_CREATED, product.id)
 
-        return result;
+        return this.productRepository.findOne({where: {id: id}, relations: ["attributes"]});
     }
 
     async updateAttribute(id: number, updateAttributesDto: UpdateAttributeDTO):Promise<AttributesEntity>{
